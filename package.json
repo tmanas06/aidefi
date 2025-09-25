@@ -1,0 +1,24 @@
+{
+  "name": "ethglobal-hackathon-dapp",
+  "version": "1.0.0",
+  "description": "Hackathon-ready dApp integrating Polygon + x402, ASI, and Self Protocol",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"pnpm --filter frontend dev\" \"pnpm --filter backend dev\"",
+    "build": "pnpm --filter frontend build && pnpm --filter backend build",
+    "install:all": "pnpm install && pnpm --filter frontend install && pnpm --filter backend install",
+    "setup": "pnpm install:all && pnpm --filter backend prisma:generate && pnpm --filter backend prisma:migrate",
+    "start": "concurrently \"pnpm --filter frontend start\" \"pnpm --filter backend start\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}
