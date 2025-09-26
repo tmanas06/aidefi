@@ -10,6 +10,7 @@ import paymentRoutes from './routes/payments'
 import identityRoutes from './routes/identity'
 import agentRoutes from './routes/agents'
 import analyticsRoutes from './routes/analytics'
+import brewitRoutes from './routes/brewit'
 
 // Load environment variables
 dotenv.config()
@@ -38,6 +39,7 @@ app.use('/api/payments', paymentRoutes)
 app.use('/api/identity', identityRoutes)
 app.use('/api/agents', agentRoutes)
 app.use('/api/analytics', analyticsRoutes)
+app.use('/api/brewit', brewitRoutes)
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

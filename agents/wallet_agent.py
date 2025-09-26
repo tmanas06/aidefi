@@ -23,6 +23,10 @@ WALLET_AGENT_SECRET = os.getenv("WALLET_AGENT_SECRET", "wallet_secret_key")
 AGENTVERSE_URL = os.getenv("ASI_AGENTVERSE_URL", "https://agentverse.asi.one")
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:3001")
 
+# Brewit configuration
+BREWIT_API_KEY = os.getenv("BREWIT_API_KEY", "")
+BREWIT_BASE_URL = os.getenv("BREWIT_BASE_URL", "https://api.brewit.money")
+
 # Create the wallet agent
 wallet_agent = Agent(
     name="Wallet Agent",
@@ -54,6 +58,32 @@ class PaymentRequest(Model):
 class PaymentResponse(Model):
     success: bool
     transaction_hash: Optional[str] = None
+    message: str
+    request_id: str
+
+class DelegatedWalletRequest(Model):
+    user_address: str
+    wallet_type: str  # "bot_pol", "bot_eth", "bot_matic", "user_delegated"
+    custom_name: Optional[str] = None
+    request_id: str
+
+class DelegatedWalletResponse(Model):
+    success: bool
+    wallet_address: Optional[str] = None
+    message: str
+    request_id: str
+
+class AutomatedOperationRequest(Model):
+    user_address: str
+    wallet_address: str
+    operation_name: str
+    task_type: str  # "send", "swap", "stake", "unstake", "claim"
+    operation_params: Dict[str, Any]
+    request_id: str
+
+class AutomatedOperationResponse(Model):
+    success: bool
+    operation_id: Optional[str] = None
     message: str
     request_id: str
 
@@ -122,6 +152,157 @@ async def handle_wallet_request(ctx: Context, sender: str, msg: WalletRequest):
             WalletResponse(
                 success=False,
                 message=f"Error processing request: {str(e)}",
+                request_id=msg.request_id
+            )
+        )
+
+@wallet_agent.on_message(model=DelegatedWalletRequest)
+async def handle_delegated_wallet_request(ctx: Context, sender: str, msg: DelegatedWalletRequest):
+    """Handle delegated wallet creation requests"""
+    ctx.logger.info(f"Received delegated wallet request: {msg.wallet_type} for {msg.user_address}")
+    
+    try:
+        # Create delegated wallet via backend API
+        async with httpx.AsyncClient() as client:
+            if msg.wallet_type.startswith("bot_"):
+                # Create bot wallet
+                response = await client.post(
+                    f"{BACKEND_URL}/api/brewit/wallets/bot",
+                    json={
+                        "botType": msg.wallet_type.split("_")[1],  # Extract "pol", "eth", "matic"
+                        "customName": msg.custom_name
+                    }
+                )
+            else:
+                # Create user delegated wallet
+                response = await client.post(
+                    f"{BACKEND_URL}/api/brewit/wallets/user-delegated",
+                    json={
+                        "userAddress": msg.user_address,
+                        "customName": msg.custom_name
+                    }
+                )
+            
+            if response.status_code == 200:
+                wallet_data = response.json()
+                wallet_address = wallet_data["wallet"]["address"]
+                
+                # Generate AI response
+                ai_response = await gemini_client.generate_agent_response(
+                    f"Created {msg.wallet_type} delegated wallet for user",
+                    "wallet-agent",
+                    {"wallet_type": msg.wallet_type, "wallet_address": wallet_address}
+                )
+                
+                await ctx.send(
+                    sender,
+                    DelegatedWalletResponse(
+                        success=True,
+                        wallet_address=wallet_address,
+                        message=f"Delegated wallet created successfully. {ai_response}",
+                        request_id=msg.request_id
+                    )
+                )
+            else:
+                await ctx.send(
+                    sender,
+                    DelegatedWalletResponse(
+                        success=False,
+                        message=f"Failed to create delegated wallet: {response.text}",
+                        request_id=msg.request_id
+                    )
+                )
+                
+    except Exception as e:
+        ctx.logger.error(f"Error creating delegated wallet: {e}")
+        await ctx.send(
+            sender,
+            DelegatedWalletResponse(
+                success=False,
+                message=f"Error creating delegated wallet: {str(e)}",
+                request_id=msg.request_id
+            )
+        )
+
+@wallet_agent.on_message(model=AutomatedOperationRequest)
+async def handle_automated_operation_request(ctx: Context, sender: str, msg: AutomatedOperationRequest):
+    """Handle automated operation creation requests"""
+    ctx.logger.info(f"Received automated operation request: {msg.operation_name} for {msg.wallet_address}")
+    
+    try:
+        # Create automated operation via backend API
+        async with httpx.AsyncClient() as client:
+            if msg.task_type == "swap":
+                response = await client.post(
+                    f"{BACKEND_URL}/api/brewit/operations/trading",
+                    json={
+                        "walletAddress": msg.wallet_address,
+                        "operationName": msg.operation_name,
+                        "tradingParams": msg.operation_params
+                    }
+                )
+            elif msg.task_type == "stake":
+                response = await client.post(
+                    f"{BACKEND_URL}/api/brewit/operations/staking",
+                    json={
+                        "walletAddress": msg.wallet_address,
+                        "operationName": msg.operation_name,
+                        "stakingParams": msg.operation_params
+                    }
+                )
+            else:
+                # Generic AI agent operation
+                response = await client.post(
+                    f"{BACKEND_URL}/api/brewit/operations/ai-agent",
+                    json={
+                        "walletAddress": msg.wallet_address,
+                        "operation": {
+                            "name": msg.operation_name,
+                            "repeat": msg.operation_params.get("repeatInterval", 5000),
+                            "times": msg.operation_params.get("maxExecutions", 1),
+                            "task": msg.task_type,
+                            "payload": msg.operation_params.get("payload", {})
+                        }
+                    }
+                )
+            
+            if response.status_code == 200:
+                operation_data = response.json()
+                operation_id = operation_data["operation"]["id"]
+                
+                # Generate AI response
+                ai_response = await gemini_client.generate_agent_response(
+                    f"Created automated {msg.task_type} operation for delegated wallet",
+                    "wallet-agent",
+                    {"operation_name": msg.operation_name, "task_type": msg.task_type, "operation_id": operation_id}
+                )
+                
+                await ctx.send(
+                    sender,
+                    AutomatedOperationResponse(
+                        success=True,
+                        operation_id=operation_id,
+                        message=f"Automated operation created successfully. {ai_response}",
+                        request_id=msg.request_id
+                    )
+                )
+            else:
+                await ctx.send(
+                    sender,
+                    AutomatedOperationResponse(
+                        success=False,
+                        message=f"Failed to create automated operation: {response.text}",
+                        request_id=msg.request_id
+                    )
+                )
+                
+    except Exception as e:
+        ctx.logger.error(f"Error creating automated operation: {e}")
+        await ctx.send(
+            sender,
+            AutomatedOperationResponse(
+                success=False,
+                message=f"Error creating automated operation: {str(e)}",
                 request_id=msg.request_id
             )
         )

@@ -39,8 +39,7 @@ export function WalletConnect() {
                 return (
                   <Button 
                     onClick={openConnectModal} 
-                    variant="neon"
-                    className="px-6"
+                    className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold rounded-lg transition-all duration-200 hover-lift glow"
                   >
                     Connect Wallet
                   </Button>
@@ -49,43 +48,48 @@ export function WalletConnect() {
 
               if (chain.unsupported) {
                 return (
-                  <Button onClick={openChainModal} variant="destructive">
-                    Wrong network
+                  <Button 
+                    onClick={openChainModal} 
+                    className="px-6 py-3 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-semibold rounded-lg transition-all duration-200 hover-lift"
+                  >
+                    Wrong Network
                   </Button>
                 )
               }
 
               return (
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-3">
                   <Button
                     onClick={openChainModal}
-                    variant="outline"
-                    className="flex items-center space-x-2"
+                    className="flex items-center space-x-2 px-4 py-2 bg-gray-800/50 border border-gray-600 text-white hover:bg-gray-700/50 rounded-lg transition-all duration-200"
                   >
                     {chain.hasIcon && (
                       <div
                         style={{
                           background: chain.iconBackground,
-                          width: 12,
-                          height: 12,
+                          width: 16,
+                          height: 16,
                           borderRadius: 999,
                           overflow: 'hidden',
-                          marginRight: 4,
+                          marginRight: 6,
                         }}
                       >
                         {chain.iconUrl && (
                           <img
                             alt={chain.name ?? 'Chain icon'}
                             src={chain.iconUrl}
-                            style={{ width: 12, height: 12 }}
+                            style={{ width: 16, height: 16 }}
                           />
                         )}
                       </div>
                     )}
-                    {chain.name}
+                    <span className="font-medium">{chain.name}</span>
                   </Button>
 
-                  <Button onClick={openAccountModal} variant="outline">
+                  <Button 
+                    onClick={openAccountModal} 
+                    className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-semibold rounded-lg transition-all duration-200 hover-lift"
+                  >
                     {account.displayName}
                     {account.displayBalance
                       ? ` (${account.displayBalance})`

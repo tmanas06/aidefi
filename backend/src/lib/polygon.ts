@@ -1,10 +1,10 @@
 import { createPublicClient, createWalletClient, http, parseEther, formatEther } from 'viem'
-import { polygonAmoy } from 'viem/chains'
+import { polygon } from 'viem/chains'
 import { privateKeyToAccount } from 'viem/accounts'
 
-// Polygon Amoy configuration
+// Polygon Mainnet configuration
 export const polygonClient = createPublicClient({
-  chain: polygonAmoy,
+  chain: polygon,
   transport: http(process.env.POLYGON_RPC_URL)
 })
 
@@ -14,7 +14,7 @@ export function createWalletClientFromPK(privateKey: string) {
   
   return createWalletClient({
     account,
-    chain: polygonAmoy,
+    chain: polygon,
     transport: http(process.env.POLYGON_RPC_URL)
   })
 }
