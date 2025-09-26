@@ -12,6 +12,7 @@ from uagents import Agent, Context, Model
 from uagents.network import Network
 from dotenv import load_dotenv
 import httpx
+from gemini_client import gemini_client
 
 # Load environment variables
 load_dotenv()
@@ -112,11 +113,18 @@ async def handle_identity_verification(ctx: Context, sender: str, msg: IdentityV
         session_result = await create_verification_session(msg.user_address, msg.proof_type, msg.required_value)
         
         if session_result["success"]:
+            # Generate AI insights for verification
+            ai_insights = await gemini_client.generate_agent_response(
+                f"Identity verification requested for {msg.proof_type}",
+                "identity-agent",
+                {"user_address": msg.user_address, "proof_type": msg.proof_type}
+            )
+            
             await ctx.send(
                 sender,
                 IdentityVerificationResponse(
                     success=True,
-                    message="Verification session created successfully",
+                    message=f"Verification session created successfully. AI Insights: {ai_insights}",
                     verification_url=session_result["verification_url"],
                     session_id=session_result["session_id"],
                     request_id=msg.request_id

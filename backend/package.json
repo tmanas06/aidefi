@@ -12,10 +12,16 @@
     "prisma:studio": "prisma studio",
     "prisma:seed": "ts-node prisma/seed.ts"
   },
-  "keywords": ["polygon", "x402", "asi", "self-protocol"],
+  "keywords": [
+    "polygon",
+    "x402",
+    "asi",
+    "self-protocol"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@prisma/client": "^5.22.0",
     "axios": "^1.7.9",
     "cors": "^2.8.5",

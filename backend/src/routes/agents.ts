@@ -1,6 +1,7 @@
 import express from 'express'
 import { PrismaClient } from '@prisma/client'
 import axios from 'axios'
+import { geminiService } from '../lib/gemini'
 
 const router = express.Router()
 const prisma = new PrismaClient()
@@ -42,14 +43,24 @@ router.post('/message', async (req, res) => {
       }
     })
 
-    // Send message to ASI agent
+    // Generate AI response using Gemini
+    const geminiResponse = await geminiService.generateAgentResponse(
+      message,
+      agentType,
+      { userAddress, interactionId: interaction.id }
+    )
+
+    // Send message to ASI agent (for logging/backend processing)
     const agentResponse = await sendToAgent(agentType, message, userAddress)
+
+    // Combine Gemini AI response with agent response
+    const combinedResponse = `${agentResponse.response}\n\nAI Insights: ${geminiResponse.message}`
 
     // Update interaction with response
     await prisma.agentInteraction.update({
       where: { id: interaction.id },
       data: {
-        response: agentResponse.response,
+        response: combinedResponse,
         status: agentResponse.success ? 'COMPLETED' : 'FAILED'
       }
     })
@@ -57,8 +68,9 @@ router.post('/message', async (req, res) => {
     res.json({
       success: agentResponse.success,
       interactionId: interaction.id,
-      response: agentResponse.response,
-      agentType
+      response: combinedResponse,
+      agentType,
+      aiEnhanced: true
     })
   } catch (error) {
     console.error('Agent message error:', error)

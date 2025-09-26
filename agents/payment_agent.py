@@ -12,6 +12,7 @@ from uagents import Agent, Context, Model
 from uagents.network import Network
 from dotenv import load_dotenv
 import httpx
+from gemini_client import gemini_client
 
 # Load environment variables
 load_dotenv()
@@ -161,6 +162,15 @@ async def handle_x402_payment(ctx: Context, sender: str, msg: X402PaymentRequest
             )
             return
         
+        # Analyze transaction with Gemini AI
+        transaction_analysis = await gemini_client.analyze_transaction({
+            "amount": msg.amount,
+            "currency": msg.currency,
+            "from": msg.user_address,
+            "to": msg.to_address,
+            "timestamp": int(asyncio.get_event_loop().time() * 1000)
+        })
+        
         # Process x402 payment
         x402_result = await process_x402_payment(msg)
         
@@ -172,12 +182,19 @@ async def handle_x402_payment(ctx: Context, sender: str, msg: X402PaymentRequest
                 "completed"
             )
             
+            # Generate AI insights for successful payment
+            ai_insights = await gemini_client.generate_agent_response(
+                f"Payment of {msg.amount} {msg.currency} was successful",
+                "payment-agent",
+                {"transaction": transaction_analysis, "x402_result": x402_result}
+            )
+            
             await ctx.send(
                 sender,
                 X402PaymentResponse(
                     success=True,
                     transaction_hash=x402_result["transaction_hash"],
-                    message="x402 payment processed successfully",
+                    message=f"x402 payment processed successfully. AI Analysis: {ai_insights}",
                     x402_response=x402_result,
                     request_id=msg.request_id
                 )

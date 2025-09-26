@@ -12,6 +12,7 @@ from uagents import Agent, Context, Model
 from uagents.network import Network
 from dotenv import load_dotenv
 import httpx
+from gemini_client import gemini_client
 
 # Load environment variables
 load_dotenv()
@@ -93,12 +94,22 @@ async def handle_wallet_request(ctx: Context, sender: str, msg: WalletRequest):
                 "data": None
             }
         
+        # Generate AI-powered response using Gemini
+        ai_response = await gemini_client.generate_agent_response(
+            f"User requested {msg.action} with params {msg.params}",
+            "wallet-agent",
+            {"user_address": msg.user_address, "response": response}
+        )
+        
+        # Combine technical response with AI insights
+        enhanced_message = f"{response['message']}\n\nAI Insights: {ai_response}"
+        
         # Send response back to user
         await ctx.send(
             sender,
             WalletResponse(
                 success=response["success"],
-                message=response["message"],
+                message=enhanced_message,
                 data=response.get("data"),
                 request_id=msg.request_id
             )

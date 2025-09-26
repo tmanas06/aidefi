@@ -6,8 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model User {
@@ -31,7 +31,7 @@ model Transaction {
   to          String
   amount      String
   currency    String
-  status      TransactionStatus @default(PENDING)
+  status      String @default("PENDING")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -62,7 +62,7 @@ model AgentInteraction {
   agentId     String
   message     String
   response    String?
-  status      AgentStatus @default(PENDING)
+  status      String @default("PENDING")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -73,16 +73,6 @@ model AgentInteraction {
   @@map("agent_interactions")
 }
 
-enum TransactionStatus {
-  PENDING
-  COMPLETED
-  FAILED
-  CANCELLED
-}
-
-enum AgentStatus {
-  PENDING
-  PROCESSING
-  COMPLETED
-  FAILED
-}
+// Enums converted to strings for SQLite compatibility
+// TransactionStatus: PENDING, COMPLETED, FAILED, CANCELLED
+// AgentStatus: PENDING, PROCESSING, COMPLETED, FAILED
