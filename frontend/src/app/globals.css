@@ -61,10 +61,11 @@
 
 @layer base {
   * {
-    border-color: rgb(55 65 81);
+    border-color: hsl(var(--border));
   }
   body {
-    @apply bg-gray-900 text-white;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
   }
 }
 

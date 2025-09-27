@@ -1,9 +1,9 @@
 'use client'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import { MainLayout } from '@/components/layout/main-layout'
+import { ModernCard, ModernCardContent, ModernCardHeader, ModernCardTitle } from '@/components/ui/modern-card'
+import { ModernButton } from '@/components/ui/modern-button'
 import { Badge } from '@/components/ui/badge'
-import { SimpleWalletConnect } from '@/components/simple-wallet-connect'
 import { 
   Bot, 
   Play, 
@@ -14,7 +14,12 @@ import {
   Activity,
   DollarSign,
   Clock,
-  Zap
+  Zap,
+  Target,
+  BarChart3,
+  AlertCircle,
+  CheckCircle,
+  Sparkles
 } from 'lucide-react'
 
 const agents = [
@@ -80,105 +85,114 @@ const getPerformanceColor = (performance: number) => {
 
 export default function AgentsPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-      {/* Header */}
-      <header className="bg-gray-900/50 backdrop-blur-sm border-b border-gray-700/50">
-        <div className="flex h-16 items-center justify-between px-6">
+    <MainLayout 
+      title="AI Agents" 
+      subtitle="Manage your automated trading bots"
+    >
+      <div className="p-6 space-y-8">
+        {/* Header Actions */}
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <h1 className="text-2xl font-bold text-white">AI Agents</h1>
-            <Badge className="bg-kadena-500/20 text-kadena-400 border-kadena-500/30">
-              {agents.length} Active
+            <Badge className="bg-kadena-500/20 text-kadena-400 border-kadena-500/30 px-3 py-1">
+              <Bot className="h-3 w-3 mr-1" />
+              {agents.length} Agents
+            </Badge>
+            <Badge className="bg-green-500/20 text-green-400 border-green-500/30 px-3 py-1">
+              <CheckCircle className="h-3 w-3 mr-1" />
+              2 Active
             </Badge>
           </div>
-          <div className="flex items-center gap-3">
-            <Button className="bg-kadena-500 hover:bg-kadena-600 text-white">
-              <Plus className="h-4 w-4 mr-2" />
-              Create Agent
-            </Button>
-            <SimpleWalletConnect />
-          </div>
+          <ModernButton variant="default" size="lg">
+            <Plus className="h-5 w-5 mr-2" />
+            Create New Agent
+          </ModernButton>
         </div>
-      </header>
 
-      <div className="p-6 space-y-8">
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card className="bg-gradient-to-br from-gray-900/50 to-gray-800/50 backdrop-blur-sm border-0">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-kadena-500/20">
-                  <Bot className="h-5 w-5 text-kadena-400" />
+          <ModernCard variant="glass" hover className="overflow-hidden">
+            <ModernCardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 rounded-xl bg-gradient-to-r from-kadena-500 to-kadena-600">
+                  <Bot className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-400">Total Agents</p>
-                  <p className="text-2xl font-bold text-white">{agents.length}</p>
+                  <p className="text-sm text-gray-400 font-medium">Total Agents</p>
+                  <p className="text-3xl font-bold text-white">{agents.length}</p>
+                  <p className="text-xs text-kadena-400">+1 this week</p>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </ModernCardContent>
+          </ModernCard>
 
-          <Card className="bg-gradient-to-br from-gray-900/50 to-gray-800/50 backdrop-blur-sm border-0">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-green-500/20">
-                  <TrendingUp className="h-5 w-5 text-green-400" />
+          <ModernCard variant="glass" hover className="overflow-hidden">
+            <ModernCardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 rounded-xl bg-gradient-to-r from-green-500 to-green-600">
+                  <TrendingUp className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-400">Total Profit</p>
-                  <p className="text-2xl font-bold text-green-400">+$6,647</p>
+                  <p className="text-sm text-gray-400 font-medium">Total Profit</p>
+                  <p className="text-3xl font-bold text-green-400">+$6,647</p>
+                  <p className="text-xs text-green-400">+12.5% this month</p>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </ModernCardContent>
+          </ModernCard>
 
-          <Card className="bg-gradient-to-br from-gray-900/50 to-gray-800/50 backdrop-blur-sm border-0">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-blue-500/20">
-                  <Activity className="h-5 w-5 text-blue-400" />
+          <ModernCard variant="glass" hover className="overflow-hidden">
+            <ModernCardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600">
+                  <Activity className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-400">Total Trades</p>
-                  <p className="text-2xl font-bold text-white">101</p>
+                  <p className="text-sm text-gray-400 font-medium">Total Trades</p>
+                  <p className="text-3xl font-bold text-white">101</p>
+                  <p className="text-xs text-blue-400">+23 this week</p>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </ModernCardContent>
+          </ModernCard>
 
-          <Card className="bg-gradient-to-br from-gray-900/50 to-gray-800/50 backdrop-blur-sm border-0">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-purple-500/20">
-                  <Zap className="h-5 w-5 text-purple-400" />
+          <ModernCard variant="glass" hover className="overflow-hidden">
+            <ModernCardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 rounded-xl bg-gradient-to-r from-purple-500 to-purple-600">
+                  <Zap className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-400">Active Agents</p>
-                  <p className="text-2xl font-bold text-purple-400">2</p>
+                  <p className="text-sm text-gray-400 font-medium">Active Agents</p>
+                  <p className="text-3xl font-bold text-purple-400">2</p>
+                  <p className="text-xs text-purple-400">67% uptime</p>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </ModernCardContent>
+          </ModernCard>
         </div>
 
         {/* Agents List */}
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {agents.map((agent) => (
-            <Card key={agent.id} className="group bg-gradient-to-br from-gray-900/50 to-gray-800/50 backdrop-blur-sm border-0 hover:shadow-xl hover:shadow-kadena-500/10 transition-all duration-300 hover:-translate-y-1">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <ModernCard key={agent.id} variant="glass" hover glow className="group overflow-hidden">
+              <ModernCardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-kadena-500/20">
-                    <Bot className="h-5 w-5 text-kadena-400" />
+                  <div className="p-3 rounded-xl bg-gradient-to-r from-kadena-500 to-kadena-600">
+                    <Bot className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <CardTitle className="text-white">{agent.name}</CardTitle>
-                    <p className="text-sm text-gray-400">{agent.strategy}</p>
+                    <ModernCardTitle className="text-white text-lg">{agent.name}</ModernCardTitle>
+                    <p className="text-sm text-gray-400 font-medium">{agent.strategy}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge className={getStatusColor(agent.status)}>
+                    {agent.status === 'active' && <CheckCircle className="h-3 w-3 mr-1" />}
+                    {agent.status === 'paused' && <Pause className="h-3 w-3 mr-1" />}
+                    {agent.status === 'error' && <AlertCircle className="h-3 w-3 mr-1" />}
                     {agent.status}
                   </Badge>
-                  <Button
+                  <ModernButton
                     size="sm"
                     variant="ghost"
                     className="text-gray-400 hover:text-white hover:bg-gray-600/50"
@@ -188,89 +202,91 @@ export default function AgentsPage() {
                     ) : (
                       <Play className="h-4 w-4" />
                     )}
-                  </Button>
+                  </ModernButton>
                 </div>
-              </CardHeader>
+              </ModernCardHeader>
               
-              <CardContent className="space-y-4">
+              <ModernCardContent className="space-y-6">
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center">
-                    <div className="flex items-center justify-center gap-1 mb-1">
-                      <TrendingUp className="h-3 w-3 text-gray-400" />
-                      <span className="text-xs text-gray-400">Performance</span>
+                  <div className="text-center p-3 rounded-lg bg-gray-800/50">
+                    <div className="flex items-center justify-center gap-1 mb-2">
+                      <TrendingUp className="h-4 w-4 text-gray-400" />
+                      <span className="text-xs text-gray-400 font-medium">Performance</span>
                     </div>
-                    <div className={`text-lg font-semibold ${getPerformanceColor(agent.performance)}`}>
+                    <div className={`text-2xl font-bold ${getPerformanceColor(agent.performance)}`}>
                       {agent.performance}%
                     </div>
                   </div>
                   
-                  <div className="text-center">
-                    <div className="flex items-center justify-center gap-1 mb-1">
-                      <Activity className="h-3 w-3 text-gray-400" />
-                      <span className="text-xs text-gray-400">Trades</span>
+                  <div className="text-center p-3 rounded-lg bg-gray-800/50">
+                    <div className="flex items-center justify-center gap-1 mb-2">
+                      <Activity className="h-4 w-4 text-gray-400" />
+                      <span className="text-xs text-gray-400 font-medium">Trades</span>
                     </div>
-                    <div className="text-lg font-semibold text-white">
+                    <div className="text-2xl font-bold text-white">
                       {agent.trades}
                     </div>
                   </div>
                   
-                  <div className="text-center">
-                    <div className="flex items-center justify-center gap-1 mb-1">
-                      <DollarSign className="h-3 w-3 text-gray-400" />
-                      <span className="text-xs text-gray-400">Profit</span>
+                  <div className="text-center p-3 rounded-lg bg-gray-800/50">
+                    <div className="flex items-center justify-center gap-1 mb-2">
+                      <DollarSign className="h-4 w-4 text-gray-400" />
+                      <span className="text-xs text-gray-400 font-medium">Profit</span>
                     </div>
-                    <div className="text-lg font-semibold text-green-400">
+                    <div className="text-2xl font-bold text-green-400">
                       {agent.profit}
                     </div>
                   </div>
                   
-                  <div className="text-center">
-                    <div className="flex items-center justify-center gap-1 mb-1">
-                      <Clock className="h-3 w-3 text-gray-400" />
-                      <span className="text-xs text-gray-400">Uptime</span>
+                  <div className="text-center p-3 rounded-lg bg-gray-800/50">
+                    <div className="flex items-center justify-center gap-1 mb-2">
+                      <Clock className="h-4 w-4 text-gray-400" />
+                      <span className="text-xs text-gray-400 font-medium">Uptime</span>
                     </div>
-                    <div className="text-lg font-semibold text-white">
+                    <div className="text-2xl font-bold text-white">
                       {agent.uptime}
                     </div>
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Spending Limit:</span>
-                    <span className="text-white">{agent.spendingLimit}</span>
+                <div className="space-y-3 p-4 rounded-lg bg-gray-800/30">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-400 font-medium">Spending Limit</span>
+                    <span className="text-sm text-white font-semibold">{agent.spendingLimit}</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Spent Today:</span>
-                    <span className="text-kadena-400">{agent.spentToday}</span>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-400 font-medium">Spent Today</span>
+                    <span className="text-sm text-kadena-400 font-semibold">{agent.spentToday}</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Last Activity:</span>
-                    <span className="text-gray-300">{agent.lastActivity}</span>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-400 font-medium">Last Activity</span>
+                    <span className="text-sm text-gray-300 font-semibold">{agent.lastActivity}</span>
                   </div>
                 </div>
 
-                <div className="flex gap-2 pt-2">
-                  <Button 
+                <div className="flex gap-3 pt-2">
+                  <ModernButton 
                     size="sm" 
-                    className="flex-1 bg-kadena-500/20 hover:bg-kadena-500/30 text-kadena-400 border border-kadena-500/30"
+                    variant="outline"
+                    className="flex-1 border-kadena-500/50 text-kadena-400 hover:bg-kadena-500/10"
                   >
                     <Settings className="h-4 w-4 mr-2" />
                     Configure
-                  </Button>
-                  <Button 
+                  </ModernButton>
+                  <ModernButton 
                     size="sm" 
-                    variant="outline"
-                    className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-700/50"
+                    variant="ghost"
+                    className="flex-1 text-gray-300 hover:bg-gray-700/50"
                   >
-                    View Details
-                  </Button>
+                    <BarChart3 className="h-4 w-4 mr-2" />
+                    Details
+                  </ModernButton>
                 </div>
-              </CardContent>
-            </Card>
+              </ModernCardContent>
+            </ModernCard>
           ))}
         </div>
       </div>
-    </div>
+    </MainLayout>
   )
 }

@@ -61,7 +61,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
   if (!mounted) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-white text-lg">Loading...</div>
+        <div className="flex items-center gap-3">
+          <div className="w-6 h-6 border-2 border-kadena-500 border-t-transparent rounded-full animate-spin" />
+          <div className="text-white text-lg">Loading...</div>
+        </div>
       </div>
     )
   }
