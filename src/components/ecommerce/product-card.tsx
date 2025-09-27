@@ -41,6 +41,19 @@ export function ProductCard({ product, onPurchaseStart, onPurchaseComplete }: Pr
       return
     }
 
+    // Check if this is a marketplace product
+    if (product.marketplace) {
+      // For marketplace products, redirect to the official marketplace
+      if (product.marketplaceUrl) {
+        window.open(product.marketplaceUrl, '_blank')
+        onPurchaseComplete?.({
+          success: true,
+          message: `Redirecting to ${product.marketplace} to complete purchase`
+        })
+        return
+      }
+    }
+
     setLoading(true)
     onPurchaseStart?.(product)
 
@@ -180,11 +193,23 @@ export function ProductCard({ product, onPurchaseStart, onPurchaseComplete }: Pr
             {formatPrice()}
           </span>
           
-          {product.category && (
-            <Badge className={getCategoryColor(product.category)}>
-              {product.category}
-            </Badge>
-          )}
+          <div className="flex items-center gap-2">
+            {product.category && (
+              <Badge className={getCategoryColor(product.category)}>
+                {product.category}
+              </Badge>
+            )}
+            {product.marketplace && (
+              <Badge variant="outline" className="text-xs">
+                {product.marketplace}
+              </Badge>
+            )}
+            {product.verified && (
+              <Badge variant="default" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 text-xs">
+                ✓ Verified
+              </Badge>
+            )}
+          </div>
         </div>
 
         {paymentInfo && (
@@ -214,7 +239,9 @@ export function ProductCard({ product, onPurchaseStart, onPurchaseComplete }: Pr
           ) : (
             <>
               <CreditCard className="mr-2 h-4 w-4" />
-              {isConnected ? 'Purchase' : 'Connect Wallet'}
+              {product.marketplace 
+                ? `Buy on ${product.marketplace}` 
+                : isConnected ? 'Purchase' : 'Connect Wallet'}
             </>
           )}
         </Button>

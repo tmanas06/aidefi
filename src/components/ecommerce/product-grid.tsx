@@ -57,7 +57,8 @@ export function ProductGrid({ onPurchaseComplete }: ProductGridProps) {
     setError(null)
     
     try {
-      const productList = await merchantService.getProducts()
+      // Use the enhanced getAllProducts method that includes marketplace data
+      const productList = await merchantService.getAllProducts()
       setProducts(productList)
     } catch (error) {
       console.error('Error loading products:', error)

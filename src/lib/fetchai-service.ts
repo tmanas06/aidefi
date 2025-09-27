@@ -143,6 +143,13 @@ export class FetchAIService {
       throw new Error(`Agent ${agentId} not found`)
     }
 
+    // For local agents, we'll use HTTP endpoints instead of WebSocket
+    // Only try WebSocket for remote agents or agents that explicitly support it
+    if (agent.endpoint === '127.0.0.1' || agent.endpoint === 'localhost') {
+      console.log(`Using HTTP connection for local agent: ${agent.name}`)
+      return null // Indicate we're using HTTP instead of WebSocket
+    }
+
     if (this.connectedAgents.has(agentId)) {
       return this.connectedAgents.get(agentId)!
     }
@@ -184,7 +191,28 @@ export class FetchAIService {
       throw new Error(`Agent ${agentId} not found`)
     }
 
-    // Try WebSocket connection first
+    // For local agents, use HTTP endpoints directly
+    if (agent.endpoint === '127.0.0.1' || agent.endpoint === 'localhost') {
+      try {
+        const response = await axios.post(
+          `http://${agent.endpoint}:${agent.port}/api/chat`,
+          {
+            message,
+            user_id: 'blockchain_user',
+            timestamp: new Date().toISOString()
+          },
+          {
+            timeout: 10000 // 10 second timeout
+          }
+        )
+        return response.data.response || response.data.message || 'No response received'
+      } catch (error) {
+        console.error(`Failed to send message to local agent ${agent.name}:`, error)
+        throw new Error(`Failed to communicate with agent: ${agent.name}`)
+      }
+    }
+
+    // Try WebSocket connection first for remote agents
     const ws = this.connectedAgents.get(agentId)
     if (ws && ws.readyState === WebSocket.OPEN) {
       return new Promise((resolve, reject) => {
@@ -220,7 +248,7 @@ export class FetchAIService {
       })
     }
 
-    // Fallback to HTTP API
+    // Fallback to HTTP API for remote agents
     try {
       const response = await axios.post(
         `http://${agent.endpoint}:${agent.port}/api/chat`,
@@ -228,11 +256,15 @@ export class FetchAIService {
           message,
           user_id: 'blockchain_user',
           timestamp: new Date().toISOString()
+        },
+        {
+          timeout: 10000 // 10 second timeout
         }
       )
-      return response.data.response
+      return response.data.response || response.data.message || 'No response received'
     } catch (error) {
-      throw new Error(`Failed to communicate with agent: ${error}`)
+      console.error(`Failed to send message to agent ${agent.name}:`, error)
+      throw new Error(`Failed to communicate with agent: ${agent.name}`)
     }
   }
 

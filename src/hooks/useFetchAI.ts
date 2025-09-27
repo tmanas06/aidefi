@@ -66,16 +66,24 @@ export function useFetchAI({
   const connectToAgent = useCallback(async (agentId: string) => {
     try {
       setError(null)
-      await fetchAIService.connectToAgent(agentId)
-      fetchAIService.updateAgentStatus(agentId, 'online')
+      const connection = await fetchAIService.connectToAgent(agentId)
       
-      if (onAgentStatusChange) {
-        onAgentStatusChange(agentId, 'online')
+      // For local agents, connection might be null (using HTTP instead of WebSocket)
+      if (connection !== null || agentId === 'merchant-agent' || agentId === 'buyer-agent') {
+        fetchAIService.updateAgentStatus(agentId, 'online')
+        
+        if (onAgentStatusChange) {
+          onAgentStatusChange(agentId, 'online')
+        }
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to connect to agent'
-      setError(errorMessage)
-      throw err
+      console.warn(`Connection warning for agent ${agentId}:`, errorMessage)
+      // Don't throw error for local agents, just log warning
+      if (!agentId.includes('merchant') && !agentId.includes('buyer')) {
+        setError(errorMessage)
+        throw err
+      }
     }
   }, [onAgentStatusChange])
 

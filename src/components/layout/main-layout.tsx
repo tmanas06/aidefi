@@ -5,6 +5,7 @@ import { Sidebar } from './sidebar'
 import { ChatDashboard } from '@/components/dashboard/chat-dashboard'
 import { AnalyticsDashboard } from '@/components/analytics/analytics-dashboard'
 import { EcommerceDashboard } from '@/components/ecommerce/ecommerce-dashboard'
+import { AgentsDashboard } from '@/components/agents/agents-dashboard'
 import { Button } from '@/components/ui/button'
 import { MessageCircle, Users, BarChart3, Bell, Settings, ShoppingBag } from 'lucide-react'
 
@@ -16,15 +17,7 @@ export function MainLayout() {
       case 'chat':
         return <ChatDashboard onStartNewChat={() => {}} />
       case 'agents':
-        return (
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-center">
-              <Users className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-              <h3 className="text-lg font-semibold mb-2">Agent Management</h3>
-              <p className="text-muted-foreground">Manage your agents and their availability</p>
-            </div>
-          </div>
-        )
+        return <AgentsDashboard />
       case 'analytics':
         return <AnalyticsDashboard />
       case 'marketplace':
