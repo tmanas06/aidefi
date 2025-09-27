@@ -6,6 +6,11 @@ export class WebSocketService {
   private isConnected = false
 
   connect(userId: string) {
+    // Check if we're in browser environment
+    if (typeof window === 'undefined') {
+      return
+    }
+
     if (this.socket?.connected) return
 
     this.socket = io(process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:3001', {

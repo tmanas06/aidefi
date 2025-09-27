@@ -41,6 +41,9 @@ export function useWebSocket({
   })
 
   useEffect(() => {
+    // Only connect on client-side
+    if (typeof window === 'undefined') return
+
     // Connect to WebSocket
     wsService.connect(userId)
 
@@ -77,8 +80,10 @@ export function useWebSocket({
 
     // Cleanup on unmount
     return () => {
-      wsService.removeAllListeners()
-      wsService.disconnect()
+      if (typeof window !== 'undefined') {
+        wsService.removeAllListeners()
+        wsService.disconnect()
+      }
     }
   }, [userId])
 

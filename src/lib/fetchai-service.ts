@@ -107,6 +107,11 @@ export class FetchAIService {
       return this.connectedAgents.get(agentId)!
     }
 
+    // Check if we're in browser environment
+    if (typeof window === 'undefined') {
+      return null
+    }
+
     try {
       const wsUrl = `ws://${agent.endpoint}:${agent.port}/ws`
       const ws = new WebSocket(wsUrl)

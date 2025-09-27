@@ -11,6 +11,7 @@ import { NFTGallery } from './nft-gallery'
 import { TransactionHistory } from './transaction-history'
 import { PortfolioChart } from './portfolio-chart'
 import { analyticsService, PortfolioSummary } from '@/lib/analytics-service'
+import { ClientOnly } from '@/components/ui/client-only'
 import { Search, RefreshCw, Download, Share2 } from 'lucide-react'
 
 export function AnalyticsDashboard() {
@@ -28,7 +29,8 @@ export function AnalyticsDashboard() {
     if (isConnected && address && !currentAddress) {
       setInputAddress(address)
       setCurrentAddress(address)
-      fetchPortfolioData(address)
+      // Delay fetch to prevent hydration issues
+      setTimeout(() => fetchPortfolioData(address), 100)
     }
   }, [isConnected, address, currentAddress])
 
@@ -143,43 +145,45 @@ export function AnalyticsDashboard() {
 
       {/* Analytics Content */}
       {currentAddress && (
-        <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="nfts">NFTs</TabsTrigger>
-            <TabsTrigger value="transactions">Transactions</TabsTrigger>
-            <TabsTrigger value="charts">Charts</TabsTrigger>
-          </TabsList>
+        <ClientOnly>
+          <Tabs defaultValue="overview" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="nfts">NFTs</TabsTrigger>
+              <TabsTrigger value="transactions">Transactions</TabsTrigger>
+              <TabsTrigger value="charts">Charts</TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="overview" className="space-y-6">
-            <PortfolioSummaryComponent 
-              summary={portfolioSummary!} 
-              loading={loading} 
-            />
-          </TabsContent>
+            <TabsContent value="overview" className="space-y-6">
+              <PortfolioSummaryComponent 
+                summary={portfolioSummary!} 
+                loading={loading} 
+              />
+            </TabsContent>
 
-          <TabsContent value="nfts" className="space-y-6">
-            <NFTGallery 
-              nfts={portfolioSummary?.nftCount ? [] : []} // This would be populated from the service
-              loading={loading} 
-            />
-          </TabsContent>
+            <TabsContent value="nfts" className="space-y-6">
+              <NFTGallery 
+                nfts={portfolioSummary?.nftCount ? [] : []} // This would be populated from the service
+                loading={loading} 
+              />
+            </TabsContent>
 
-          <TabsContent value="transactions" className="space-y-6">
-            <TransactionHistory 
-              transactions={portfolioSummary?.recentTransactions || []} 
-              loading={loading} 
-            />
-          </TabsContent>
+            <TabsContent value="transactions" className="space-y-6">
+              <TransactionHistory 
+                transactions={portfolioSummary?.recentTransactions || []} 
+                loading={loading} 
+              />
+            </TabsContent>
 
-          <TabsContent value="charts" className="space-y-6">
-            <PortfolioChart 
-              portfolioHistory={portfolioHistory}
-              portfolioAllocation={portfolioSummary?.portfolioAllocation || []}
-              loading={loading}
-            />
-          </TabsContent>
-        </Tabs>
+            <TabsContent value="charts" className="space-y-6">
+              <PortfolioChart 
+                portfolioHistory={portfolioHistory}
+                portfolioAllocation={portfolioSummary?.portfolioAllocation || []}
+                loading={loading}
+              />
+            </TabsContent>
+          </Tabs>
+        </ClientOnly>
       )}
 
       {/* Empty State */}

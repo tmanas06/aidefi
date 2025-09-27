@@ -99,6 +99,11 @@ export class AnalyticsService {
 
   // Get token balances for an address
   async getTokenBalances(address: string): Promise<TokenBalance[]> {
+    // Check if we're in browser environment
+    if (typeof window === 'undefined') {
+      return []
+    }
+
     return this.getCachedOrFetch(`tokens-${address}`, async () => {
       try {
         const balances = await alchemy.core.getTokenBalances(address)
@@ -142,6 +147,11 @@ export class AnalyticsService {
 
   // Get NFTs for an address
   async getNFTs(address: string): Promise<NFT[]> {
+    // Check if we're in browser environment
+    if (typeof window === 'undefined') {
+      return []
+    }
+
     return this.getCachedOrFetch(`nfts-${address}`, async () => {
       try {
         const nfts = await alchemy.nft.getNftsForOwner(address, {

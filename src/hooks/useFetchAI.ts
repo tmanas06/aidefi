@@ -124,9 +124,11 @@ export function useFetchAI({
     }
   }, [onAgentStatusChange])
 
-  // Initialize on mount
+  // Initialize on mount (client-side only)
   useEffect(() => {
-    initialize()
+    if (typeof window !== 'undefined') {
+      initialize()
+    }
   }, [initialize])
 
   // Periodically check agent statuses
