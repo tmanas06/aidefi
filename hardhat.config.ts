@@ -1,61 +1,37 @@
-import { HardhatUserConfig } from "hardhat/config";
-import "@nomicfoundation/hardhat-toolbox";
+import { HardhatUserConfig } from 'hardhat/config';
+import '@nomicfoundation/hardhat-toolbox';
+import '@kadena/hardhat-chainweb';
+import '@kadena/hardhat-kadena-create2';
+import { config as dotenvConfig } from 'dotenv';
+
+// Load environment variables from .env file
+dotenvConfig();
 
 const config: HardhatUserConfig = {
-  solidity: {
-    version: "0.8.19",
-    settings: {
-      optimizer: {
-        enabled: true,
-        runs: 200,
+  solidity: '0.8.28',
+  chainweb: {
+    hardhat: {
+      chains: 2,
+      networkOptions: {
+        allowUnlimitedContractSize: true,
       },
     },
-  },
-  networks: {
-    chainwebTestnet: {
-      url: "https://evm-testnet.chainweb.com/chainweb/0.0/evm-testnet/chain/20/evm/rpc",
-      chainId: 5920,
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
-      gasPrice: 1000000000, // 1 gwei
-    },
-    chainwebMainnet: {
-      url: "https://evm.chainweb.com/chainweb/0.0/mainnet01/chain/20/evm/rpc",
-      chainId: 1,
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
-      gasPrice: 1000000000, // 1 gwei
-    },
-    // Multi-chain deployment for Kadena
-    chainwebTestnetChain0: {
-      url: "https://evm-testnet.chainweb.com/chainweb/0.0/evm-testnet/chain/0/evm/rpc",
-      chainId: 5920,
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
-    },
-    chainwebTestnetChain1: {
-      url: "https://evm-testnet.chainweb.com/chainweb/0.0/evm-testnet/chain/1/evm/rpc",
-      chainId: 5920,
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
-    },
-  },
-  etherscan: {
-    apiKey: {
-      chainwebTestnet: "your-api-key-here",
-    },
-    customChains: [
-      {
-        network: "chainwebTestnet",
-        chainId: 5920,
-        urls: {
-          apiURL: "http://chain-20.evm-testnet-blockscout.chainweb.com/api",
-          browserURL: "http://chain-20.evm-testnet-blockscout.chainweb.com/",
-        },
+    testnet: {
+      type: 'external',
+      chains: 5,
+      accounts: [process.env.DEPLOYER_PRIVATE_KEY ?? ''],
+      chainIdOffset: 5920,
+      chainwebChainIdOffset: 20,
+      externalHostUrl:
+        'https://evm-testnet.chainweb.com/chainweb/0.0/evm-testnet',
+      etherscan: {
+        apiKey: 'abc', // Any non-empty string works for Blockscout
+        apiURLTemplate:
+          'https://chain-{cid}.evm-testnet-blockscout.chainweb.com/api/',
+        browserURLTemplate:
+          'https://chain-{cid}.evm-testnet-blockscout.chainweb.com',
       },
-    ],
-  },
-  paths: {
-    sources: "./contracts",
-    tests: "./test",
-    cache: "./cache",
-    artifacts: "./artifacts",
+    },
   },
 };
 

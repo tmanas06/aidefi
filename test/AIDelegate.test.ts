@@ -1,17 +1,19 @@
-const { expect } = require("chai");
-const { ethers } = require("hardhat");
+import { expect } from "chai";
+import { ethers } from "hardhat";
+import { SignerWithAddress } from "@nomicfoundation/hardhat-ethers/signers";
+import { AIDelegate } from "../typechain-types";
 
 describe("AIDelegate", function () {
-  let aiDelegate;
-  let owner;
-  let delegate;
-  let addr1;
+  let aiDelegate: AIDelegate;
+  let owner: SignerWithAddress;
+  let delegate: SignerWithAddress;
+  let addr1: SignerWithAddress;
 
   beforeEach(async function () {
     [owner, delegate, addr1] = await ethers.getSigners();
     
     const AIDelegate = await ethers.getContractFactory("AIDelegate");
-    aiDelegate = await AIDelegate.deploy();
+    aiDelegate = await AIDelegate.deploy() as AIDelegate;
     await aiDelegate.waitForDeployment();
   });
 

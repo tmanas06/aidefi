@@ -59,23 +59,23 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="p-6 bg-gray-800/50 rounded-xl border border-gray-700/50">
                 <h3 className="text-sm font-medium text-gray-400 mb-2">Total Value Locked</h3>
-                <p className="text-2xl font-bold text-white">$2,847,392</p>
-                <p className="text-sm text-green-400">+12.5%</p>
+                <p className="text-2xl font-bold text-white">Loading...</p>
+                <p className="text-sm text-green-400">Connecting to network...</p>
               </div>
               <div className="p-6 bg-gray-800/50 rounded-xl border border-gray-700/50">
                 <h3 className="text-sm font-medium text-gray-400 mb-2">Active Agents</h3>
-                <p className="text-2xl font-bold text-white">24</p>
-                <p className="text-sm text-green-400">+3</p>
+                <p className="text-2xl font-bold text-white">Loading...</p>
+                <p className="text-sm text-green-400">Fetching data...</p>
               </div>
               <div className="p-6 bg-gray-800/50 rounded-xl border border-gray-700/50">
                 <h3 className="text-sm font-medium text-gray-400 mb-2">Total Transactions</h3>
-                <p className="text-2xl font-bold text-white">1,847</p>
-                <p className="text-sm text-green-400">+8.2%</p>
+                <p className="text-2xl font-bold text-white">Loading...</p>
+                <p className="text-sm text-green-400">Calculating...</p>
               </div>
               <div className="p-6 bg-gray-800/50 rounded-xl border border-gray-700/50">
                 <h3 className="text-sm font-medium text-gray-400 mb-2">AI Bot Performance</h3>
-                <p className="text-2xl font-bold text-white">94.2%</p>
-                <p className="text-sm text-red-400">-2.1%</p>
+                <p className="text-2xl font-bold text-white">Loading...</p>
+                <p className="text-sm text-red-400">Analyzing...</p>
               </div>
             </div>
 

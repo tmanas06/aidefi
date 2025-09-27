@@ -1,4 +1,4 @@
-const { ethers } = require("hardhat");
+import { ethers } from "hardhat";
 
 /**
  * Comprehensive test script for the AI DeFi system
@@ -138,7 +138,7 @@ async function main() {
       { value: excessiveValue }
     );
     console.log("❌ This should have failed!");
-  } catch (error) {
+  } catch (error: any) {
     console.log("✅ Spending limit correctly enforced:", error.message);
   }
 
@@ -185,7 +185,7 @@ async function main() {
   console.log("CrossChainBridge:", await crossChainBridge.getAddress());
   
   console.log("\n🚀 Next steps:");
-  console.log("1. Deploy to testnet: npx hardhat run scripts/deploy.js --network chainwebTestnet");
+  console.log("1. Deploy to testnet: npx hardhat run scripts/deploy.ts --network chainwebTestnet");
   console.log("2. Start frontend: pnpm dev");
   console.log("3. Connect MetaMask to Kadena Chainweb EVM Testnet");
   console.log("4. Get test KDA from faucet: https://tools.kadena.io/faucet/evm");

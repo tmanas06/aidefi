@@ -1,12 +1,14 @@
-const { expect } = require("chai");
-const { ethers } = require("hardhat");
+import { expect } from "chai";
+import { ethers } from "hardhat";
+import { SignerWithAddress } from "@nomicfoundation/hardhat-ethers/signers";
+import { SimpleSwap, MockToken } from "../typechain-types";
 
 describe("SimpleSwap", function () {
-  let simpleSwap;
-  let mockToken;
-  let owner;
-  let user1;
-  let user2;
+  let simpleSwap: SimpleSwap;
+  let mockToken: MockToken;
+  let owner: SignerWithAddress;
+  let user1: SignerWithAddress;
+  let user2: SignerWithAddress;
 
   beforeEach(async function () {
     [owner, user1, user2] = await ethers.getSigners();
@@ -18,7 +20,7 @@ describe("SimpleSwap", function () {
       "TEST",
       18,
       ethers.parseEther("1000000") // 1M tokens
-    );
+    ) as MockToken;
     await mockToken.waitForDeployment();
 
     // Deploy SimpleSwap
@@ -26,7 +28,7 @@ describe("SimpleSwap", function () {
     simpleSwap = await SimpleSwap.deploy(
       await mockToken.getAddress(),
       ethers.parseEther("100") // 1 KDA = 100 TEST tokens
-    );
+    ) as SimpleSwap;
     await simpleSwap.waitForDeployment();
 
     // Transfer some tokens to the swap contract for liquidity
@@ -96,7 +98,7 @@ describe("SimpleSwap", function () {
       
       const tx = await simpleSwap.connect(user1).swapTokensForKDA(tokenAmount);
       const receipt = await tx.wait();
-      const gasUsed = receipt.gasUsed * receipt.gasPrice;
+      const gasUsed = receipt!.gasUsed * receipt!.gasPrice;
       
       const finalBalance = await ethers.provider.getBalance(user1.address);
       const balanceChange = finalBalance - initialBalance + gasUsed;

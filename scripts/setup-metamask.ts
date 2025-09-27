@@ -5,7 +5,36 @@
  * MetaMask to work with Kadena Chainweb EVM Testnet
  */
 
-const KADENA_TESTNET_CONFIG = {
+interface KadenaTestnetConfig {
+  chainId: string;
+  chainName: string;
+  rpcUrls: string[];
+  nativeCurrency: {
+    name: string;
+    symbol: string;
+    decimals: number;
+  };
+  blockExplorerUrls: string[];
+  faucetUrl: string;
+}
+
+interface EthereumProvider {
+  request: (params: { method: string; params?: any[] }) => Promise<any>;
+}
+
+declare global {
+  interface Window {
+    ethereum?: EthereumProvider;
+    addKadenaTestnetToMetaMask: () => Promise<void>;
+    switchToKadenaTestnet: () => Promise<void>;
+    openFaucet: () => void;
+    checkMetaMask: () => boolean;
+    getCurrentNetwork: () => Promise<void>;
+    completeSetup: () => Promise<void>;
+  }
+}
+
+const KADENA_TESTNET_CONFIG: KadenaTestnetConfig = {
   chainId: '0x1720', // 5920 in hex
   chainName: 'Chainweb EVM Testnet',
   rpcUrls: ['https://evm-testnet.chainweb.com/chainweb/0.0/evm-testnet/chain/20/evm/rpc'],
@@ -22,9 +51,9 @@ const KADENA_TESTNET_CONFIG = {
  * Add Kadena Chainweb EVM Testnet to MetaMask
  * This function can be called from the browser console
  */
-async function addKadenaTestnetToMetaMask() {
+async function addKadenaTestnetToMetaMask(): Promise<void> {
   try {
-    await window.ethereum.request({
+    await window.ethereum!.request({
       method: 'wallet_addEthereumChain',
       params: [KADENA_TESTNET_CONFIG],
     });
@@ -38,14 +67,14 @@ async function addKadenaTestnetToMetaMask() {
 /**
  * Switch to Kadena Chainweb EVM Testnet
  */
-async function switchToKadenaTestnet() {
+async function switchToKadenaTestnet(): Promise<void> {
   try {
-    await window.ethereum.request({
+    await window.ethereum!.request({
       method: 'wallet_switchEthereumChain',
       params: [{ chainId: KADENA_TESTNET_CONFIG.chainId }],
     });
     console.log('✅ Switched to Kadena Chainweb EVM Testnet!');
-  } catch (error) {
+  } catch (error: any) {
     if (error.code === 4902) {
       // Network not added, add it first
       await addKadenaTestnetToMetaMask();
@@ -58,7 +87,7 @@ async function switchToKadenaTestnet() {
 /**
  * Get test KDA from faucet
  */
-function openFaucet() {
+function openFaucet(): void {
   window.open(KADENA_TESTNET_CONFIG.faucetUrl, '_blank');
   console.log('🔗 Faucet opened in new tab');
 }
@@ -66,7 +95,7 @@ function openFaucet() {
 /**
  * Check if MetaMask is installed
  */
-function checkMetaMask() {
+function checkMetaMask(): boolean {
   if (typeof window.ethereum !== 'undefined') {
     console.log('✅ MetaMask is installed');
     return true;
@@ -80,10 +109,10 @@ function checkMetaMask() {
 /**
  * Get current network info
  */
-async function getCurrentNetwork() {
+async function getCurrentNetwork(): Promise<void> {
   try {
-    const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-    const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+    const chainId = await window.ethereum!.request({ method: 'eth_chainId' });
+    const accounts = await window.ethereum!.request({ method: 'eth_accounts' });
     
     console.log('Current Chain ID:', chainId);
     console.log('Connected Accounts:', accounts);
@@ -102,7 +131,7 @@ async function getCurrentNetwork() {
 /**
  * Complete setup process
  */
-async function completeSetup() {
+async function completeSetup(): Promise<void> {
   console.log('🚀 Starting Kadena Chainweb EVM Testnet setup...');
   
   if (!checkMetaMask()) {
@@ -114,7 +143,7 @@ async function completeSetup() {
   
   console.log('\n📋 Next steps:');
   console.log('1. Get test KDA from faucet:', KADENA_TESTNET_CONFIG.faucetUrl);
-  console.log('2. Deploy contracts: npx hardhat run scripts/deploy.js --network chainwebTestnet');
+  console.log('2. Deploy contracts: npx hardhat run scripts/deploy.ts --network chainwebTestnet');
   console.log('3. Start the dApp: pnpm dev');
 }
 
@@ -131,7 +160,7 @@ if (typeof window !== 'undefined') {
   console.log('💡 Run completeSetup() to start the setup process');
 }
 
-module.exports = {
+export {
   KADENA_TESTNET_CONFIG,
   addKadenaTestnetToMetaMask,
   switchToKadenaTestnet,
