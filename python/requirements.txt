@@ -1,0 +1,6 @@
+# Fetch.ai Agent Requirements
+uagents>=0.5.0
+fastapi>=0.100.0
+uvicorn>=0.23.0
+pydantic>=2.0.0
+websockets>=11.0.0
