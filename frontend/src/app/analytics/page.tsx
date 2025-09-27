@@ -1,7 +1,7 @@
 'use client'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { WalletConnect } from '@/components/wallet-connect'
+import { SimpleWalletConnect } from '@/components/simple-wallet-connect'
 import { 
   TrendingUp, 
   TrendingDown,
@@ -49,7 +49,7 @@ export default function AnalyticsPage() {
               <span className="text-sm text-green-400 font-medium">Live Data</span>
             </div>
           </div>
-          <WalletConnect />
+          <SimpleWalletConnect />
         </div>
       </header>
 

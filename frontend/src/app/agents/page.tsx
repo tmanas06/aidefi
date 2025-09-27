@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { WalletConnect } from '@/components/wallet-connect'
+import { SimpleWalletConnect } from '@/components/simple-wallet-connect'
 import { 
   Bot, 
   Play, 
@@ -95,7 +95,7 @@ export default function AgentsPage() {
               <Plus className="h-4 w-4 mr-2" />
               Create Agent
             </Button>
-            <WalletConnect />
+            <SimpleWalletConnect />
           </div>
         </div>
       </header>

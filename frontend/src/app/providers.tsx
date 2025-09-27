@@ -5,7 +5,7 @@ import { WagmiProvider } from 'wagmi'
 import { RainbowKitProvider, getDefaultConfig } from '@rainbow-me/rainbowkit'
 import { mainnet, polygon, arbitrum, base, sepolia } from 'wagmi/chains'
 import { http } from 'viem'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 // Import RainbowKit styles
 import '@rainbow-me/rainbowkit/styles.css'
@@ -52,12 +52,24 @@ const config = getDefaultConfig({
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient())
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-white text-lg">Loading...</div>
+      </div>
+    )
+  }
 
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider
-          theme="dark"
           modalSize="compact"
           showRecentTransactions={true}
         >

@@ -3,7 +3,10 @@
 import { OverviewCards } from '@/components/dashboard/overview-cards'
 import { RecentTransactions } from '@/components/dashboard/recent-transactions'
 import { AgentStatus } from '@/components/dashboard/agent-status'
-import { WalletConnect } from '@/components/wallet-connect'
+import { SimpleWalletConnect } from '@/components/simple-wallet-connect'
+import { TransactionHistory } from '@/components/transaction-history'
+import { WalletBalance } from '@/components/wallet-balance'
+import { useAccount } from 'wagmi'
 import { 
   TrendingUp, 
   Activity, 
@@ -15,6 +18,8 @@ import {
 } from 'lucide-react'
 
 export default function Dashboard() {
+  const { address, isConnected } = useAccount()
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       {/* Header */}
@@ -27,7 +32,7 @@ export default function Dashboard() {
               <span className="text-sm text-green-400 font-medium">Live</span>
             </div>
           </div>
-          <WalletConnect />
+          <SimpleWalletConnect />
         </div>
       </header>
 
@@ -72,9 +77,13 @@ export default function Dashboard() {
 
           {/* Main Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Recent Transactions */}
+            {/* Recent Transactions or Wallet Balance */}
             <div className="lg:col-span-2">
-              <RecentTransactions />
+              {isConnected && address ? (
+                <WalletBalance address={address} />
+              ) : (
+                <RecentTransactions />
+              )}
             </div>
 
             {/* AI Agents */}
@@ -82,6 +91,11 @@ export default function Dashboard() {
               <AgentStatus />
             </div>
           </div>
+
+          {/* Transaction History - Only show when connected */}
+          {isConnected && address && (
+            <TransactionHistory address={address} />
+          )}
 
           {/* Quick Actions */}
           <div className="bg-gradient-to-r from-gray-800/50 to-gray-700/50 rounded-2xl p-6 border border-gray-600/30">

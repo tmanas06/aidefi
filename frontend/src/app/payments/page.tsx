@@ -3,7 +3,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { WalletConnect } from '@/components/wallet-connect'
+import { SimpleWalletConnect } from '@/components/simple-wallet-connect'
+import { TransactionHistory } from '@/components/transaction-history'
+import { WalletBalance } from '@/components/wallet-balance'
+import { useAccount } from 'wagmi'
 import { 
   Wallet, 
   Send, 
@@ -97,6 +100,8 @@ const getStatusColor = (status: string) => {
 }
 
 export default function PaymentsPage() {
+  const { address, isConnected } = useAccount()
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       {/* Header */}
@@ -108,58 +113,62 @@ export default function PaymentsPage() {
               Kadena Network
             </Badge>
           </div>
-          <WalletConnect />
+          <SimpleWalletConnect />
         </div>
       </header>
 
       <div className="p-6 space-y-8">
         {/* Balance Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="bg-gradient-to-br from-kadena-500/20 to-kadena-600/20 border-kadena-500/30">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-kadena-500/30">
-                  <Wallet className="h-5 w-5 text-kadena-400" />
+        {isConnected && address ? (
+          <WalletBalance address={address} />
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card className="bg-gradient-to-br from-kadena-500/20 to-kadena-600/20 border-kadena-500/30">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-kadena-500/30">
+                    <Wallet className="h-5 w-5 text-kadena-400" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-kadena-300">Total Balance</p>
+                    <p className="text-2xl font-bold text-white">12.5 KDA</p>
+                    <p className="text-sm text-kadena-300">≈ $23,750</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm text-kadena-300">Total Balance</p>
-                  <p className="text-2xl font-bold text-white">12.5 KDA</p>
-                  <p className="text-sm text-kadena-300">≈ $23,750</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          <Card className="bg-gradient-to-br from-green-500/20 to-green-600/20 border-green-500/30">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-green-500/30">
-                  <ArrowDownLeft className="h-5 w-5 text-green-400" />
+            <Card className="bg-gradient-to-br from-green-500/20 to-green-600/20 border-green-500/30">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-green-500/30">
+                    <ArrowDownLeft className="h-5 w-5 text-green-400" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-green-300">Received Today</p>
+                    <p className="text-2xl font-bold text-white">3.2 KDA</p>
+                    <p className="text-sm text-green-300">≈ $6,080</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm text-green-300">Received Today</p>
-                  <p className="text-2xl font-bold text-white">3.2 KDA</p>
-                  <p className="text-sm text-green-300">≈ $6,080</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          <Card className="bg-gradient-to-br from-blue-500/20 to-blue-600/20 border-blue-500/30">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-blue-500/30">
-                  <ArrowUpRight className="h-5 w-5 text-blue-400" />
+            <Card className="bg-gradient-to-br from-blue-500/20 to-blue-600/20 border-blue-500/30">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-blue-500/30">
+                    <ArrowUpRight className="h-5 w-5 text-blue-400" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-blue-300">Sent Today</p>
+                    <p className="text-2xl font-bold text-white">1.8 KDA</p>
+                    <p className="text-sm text-blue-300">≈ $3,420</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm text-blue-300">Sent Today</p>
-                  <p className="text-2xl font-bold text-white">1.8 KDA</p>
-                  <p className="text-sm text-blue-300">≈ $3,420</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         {/* Action Buttons */}
         <div className="flex gap-4">
@@ -177,72 +186,76 @@ export default function PaymentsPage() {
           </Button>
         </div>
 
-        {/* Recent Transactions */}
-        <Card className="bg-gradient-to-br from-gray-900/50 to-gray-800/50 backdrop-blur-sm border-0">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-            <CardTitle className="text-xl font-semibold text-white flex items-center gap-2">
-              <History className="h-5 w-5 text-kadena-400" />
-              Recent Transactions
-            </CardTitle>
-            <Button variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-700/50">
-              View All
-            </Button>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {transactions.map((tx) => (
-              <div
-                key={tx.id}
-                className="group flex items-center justify-between p-4 rounded-xl bg-gray-800/30 hover:bg-gray-700/50 transition-all duration-300 hover:shadow-lg hover:shadow-kadena-500/5"
-              >
-                <div className="flex items-center gap-4">
-                  <div className={`p-2 rounded-lg ${
-                    tx.type === 'send' 
-                      ? 'bg-red-500/20' 
-                      : 'bg-green-500/20'
-                  }`}>
-                    {tx.type === 'send' ? (
-                      <ArrowUpRight className="h-4 w-4 text-red-400" />
-                    ) : (
-                      <ArrowDownLeft className="h-4 w-4 text-green-400" />
-                    )}
-                  </div>
-                  
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-medium text-white">
-                        {tx.amount}
-                      </span>
-                      <Badge className={getStatusColor(tx.status)}>
-                        {tx.status}
-                      </Badge>
+        {/* Real Transaction History or Mock Data */}
+        {isConnected && address ? (
+          <TransactionHistory address={address} />
+        ) : (
+          <Card className="bg-gradient-to-br from-gray-900/50 to-gray-800/50 backdrop-blur-sm border-0">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+              <CardTitle className="text-xl font-semibold text-white flex items-center gap-2">
+                <History className="h-5 w-5 text-kadena-400" />
+                Recent Transactions
+              </CardTitle>
+              <Button variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-700/50">
+                View All
+              </Button>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {transactions.map((tx) => (
+                <div
+                  key={tx.id}
+                  className="group flex items-center justify-between p-4 rounded-xl bg-gray-800/30 hover:bg-gray-700/50 transition-all duration-300 hover:shadow-lg hover:shadow-kadena-500/5"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className={`p-2 rounded-lg ${
+                      tx.type === 'send' 
+                        ? 'bg-red-500/20' 
+                        : 'bg-green-500/20'
+                    }`}>
+                      {tx.type === 'send' ? (
+                        <ArrowUpRight className="h-4 w-4 text-red-400" />
+                      ) : (
+                        <ArrowDownLeft className="h-4 w-4 text-green-400" />
+                      )}
                     </div>
                     
-                    <div className="flex items-center gap-4 text-sm text-gray-400">
-                      <span>{tx.value}</span>
-                      <div className="flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        {tx.time}
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-medium text-white">
+                          {tx.amount}
+                        </span>
+                        <Badge className={getStatusColor(tx.status)}>
+                          {tx.status}
+                        </Badge>
                       </div>
-                      <span className="text-xs">
-                        {tx.type === 'send' ? `To: ${tx.to}` : `From: ${tx.from}`}
-                      </span>
+                      
+                      <div className="flex items-center gap-4 text-sm text-gray-400">
+                        <span>{tx.value}</span>
+                        <div className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {tx.time}
+                        </div>
+                        <span className="text-xs">
+                          {tx.type === 'send' ? `To: ${tx.to}` : `From: ${tx.from}`}
+                        </span>
+                      </div>
                     </div>
                   </div>
+                  
+                  <div className="flex items-center gap-2">
+                    {getStatusIcon(tx.status)}
+                    <span className="text-xs text-gray-500 font-mono">
+                      {tx.hash}
+                    </span>
+                    <button className="p-1 rounded hover:bg-gray-600/50 transition-colors">
+                      <ExternalLink className="h-3 w-3 text-gray-400" />
+                    </button>
+                  </div>
                 </div>
-                
-                <div className="flex items-center gap-2">
-                  {getStatusIcon(tx.status)}
-                  <span className="text-xs text-gray-500 font-mono">
-                    {tx.hash}
-                  </span>
-                  <button className="p-1 rounded hover:bg-gray-600/50 transition-colors">
-                    <ExternalLink className="h-3 w-3 text-gray-400" />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
+              ))}
+            </CardContent>
+          </Card>
+        )}
 
         {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
