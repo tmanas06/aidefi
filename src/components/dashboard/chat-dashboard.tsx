@@ -5,10 +5,12 @@ import { Agent, ChatSession, Message } from '@/types/chat'
 import { AgentList } from '@/components/agents/agent-list'
 import { ChatInterface } from '@/components/chat/chat-interface'
 import { Button } from '@/components/ui/button'
-import { ArrowLeft, Plus } from 'lucide-react'
+import { ArrowLeft, Plus, Bot, Zap } from 'lucide-react'
 import { useWebSocket } from '@/hooks/useWebSocket'
+import { useFetchAI } from '@/hooks/useFetchAI'
 import { useAccount } from 'wagmi'
 import { WalletConnect } from '@/components/wallet/wallet-connect'
+import { FetchAIAgentList } from '@/components/agents/fetchai-agent-list'
 
 interface ChatDashboardProps {
   onStartNewChat: () => void
@@ -51,7 +53,32 @@ export function ChatDashboard({ onStartNewChat }: ChatDashboardProps) {
   const [currentSession, setCurrentSession] = useState<ChatSession | null>(null)
   const [selectedAgentId, setSelectedAgentId] = useState<string | undefined>()
   const [showAgentList, setShowAgentList] = useState(true)
+  const [useFetchAIAgents, setUseFetchAIAgents] = useState(false)
   const { address, isConnected } = useAccount()
+
+  // Fetch.ai integration
+  const {
+    agents: fetchAIAgents,
+    isInitialized: fetchAIInitialized,
+    loading: fetchAILoading,
+    error: fetchAIError,
+    sendMessage: fetchAISendMessage,
+    connectToAgent: fetchAIConnectToAgent,
+    disconnectFromAgent: fetchAIDisconnectFromAgent,
+    refreshAgents: refreshFetchAIAgents
+  } = useFetchAI({
+    onMessageReceived: (message: Message) => {
+      setCurrentSession(prev => prev ? {
+        ...prev,
+        messages: [...prev.messages, message],
+        updatedAt: new Date()
+      } : null)
+    },
+    onAgentStatusChange: (agentId: string, status: 'online' | 'offline' | 'busy') => {
+      // Update Fetch.ai agent status
+      console.log(`Fetch.ai agent ${agentId} status changed to ${status}`)
+    }
+  })
 
   // WebSocket integration
   const { connected, joinAgentRoom, leaveAgentRoom, sendMessage: wsSendMessage } = useWebSocket({
@@ -80,40 +107,76 @@ export function ChatDashboard({ onStartNewChat }: ChatDashboardProps) {
     }
   })
 
-  const handleStartChat = (agentId: string) => {
-    const agent = agents.find(a => a.id === agentId)
-    if (!agent) return
+  const handleStartChat = async (agentId: string) => {
+    if (useFetchAIAgents) {
+      // Handle Fetch.ai agent
+      const fetchAIAgent = fetchAIAgents.find(a => a.id === agentId)
+      if (!fetchAIAgent) return
 
-    // Join agent room via WebSocket
-    if (connected) {
-      joinAgentRoom(agentId)
-    }
-
-    const newSession: ChatSession = {
-      id: `session-${Date.now()}`,
-      agentId: agent.id,
-      agentName: agent.name,
-      messages: [
-        {
-          id: 'msg-1',
-          content: `Hello! I'm ${agent.name}. How can I help you today?`,
-          timestamp: new Date(),
-          sender: 'agent',
-          agentId: agent.id,
-          agentName: agent.name
+      try {
+        await fetchAIConnectToAgent(agentId)
+        
+        const newSession: ChatSession = {
+          id: `fetch-session-${Date.now()}`,
+          agentId: fetchAIAgent.id,
+          agentName: fetchAIAgent.name,
+          messages: [
+            {
+              id: 'msg-1',
+              content: `Hello! I'm ${fetchAIAgent.name}, a Fetch.ai autonomous agent. How can I assist you today?`,
+              timestamp: new Date(),
+              sender: 'agent',
+              agentId: fetchAIAgent.id,
+              agentName: fetchAIAgent.name
+            }
+          ],
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          status: 'active'
         }
-      ],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      status: 'active'
-    }
 
-    setCurrentSession(newSession)
-    setSelectedAgentId(agentId)
-    setShowAgentList(false)
+        setCurrentSession(newSession)
+        setSelectedAgentId(agentId)
+        setShowAgentList(false)
+      } catch (error) {
+        console.error('Failed to connect to Fetch.ai agent:', error)
+      }
+    } else {
+      // Handle regular agent
+      const agent = agents.find(a => a.id === agentId)
+      if (!agent) return
+
+      // Join agent room via WebSocket
+      if (connected) {
+        joinAgentRoom(agentId)
+      }
+
+      const newSession: ChatSession = {
+        id: `session-${Date.now()}`,
+        agentId: agent.id,
+        agentName: agent.name,
+        messages: [
+          {
+            id: 'msg-1',
+            content: `Hello! I'm ${agent.name}. How can I help you today?`,
+            timestamp: new Date(),
+            sender: 'agent',
+            agentId: agent.id,
+            agentName: agent.name
+          }
+        ],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        status: 'active'
+      }
+
+      setCurrentSession(newSession)
+      setSelectedAgentId(agentId)
+      setShowAgentList(false)
+    }
   }
 
-  const handleSendMessage = (content: string) => {
+  const handleSendMessage = async (content: string) => {
     if (!currentSession) return
 
     const userMessage: Message = {
@@ -131,15 +194,17 @@ export function ChatDashboard({ onStartNewChat }: ChatDashboardProps) {
 
     setCurrentSession(updatedSession)
 
-    // Send message via WebSocket
-    if (connected) {
-      wsSendMessage(currentSession.id, content, currentSession.agentId)
-    } else {
-      // Fallback simulation if WebSocket not connected
-      setTimeout(() => {
-        const agentResponse: Message = {
+    if (useFetchAIAgents) {
+      // Send message to Fetch.ai agent
+      try {
+        await fetchAISendMessage(currentSession.agentId, content)
+      } catch (error) {
+        console.error('Failed to send message to Fetch.ai agent:', error)
+        
+        // Fallback response
+        const errorResponse: Message = {
           id: `msg-${Date.now() + 1}`,
-          content: "Thank you for your message. Let me help you with that. Can you provide more details?",
+          content: "I'm sorry, I'm experiencing technical difficulties. Please try again later.",
           timestamp: new Date(),
           sender: 'agent',
           agentId: currentSession.agentId,
@@ -148,16 +213,43 @@ export function ChatDashboard({ onStartNewChat }: ChatDashboardProps) {
 
         setCurrentSession(prev => prev ? {
           ...prev,
-          messages: [...prev.messages, agentResponse],
+          messages: [...prev.messages, errorResponse],
           updatedAt: new Date()
         } : null)
-      }, 1000)
+      }
+    } else {
+      // Send message via WebSocket
+      if (connected) {
+        wsSendMessage(currentSession.id, content, currentSession.agentId)
+      } else {
+        // Fallback simulation if WebSocket not connected
+        setTimeout(() => {
+          const agentResponse: Message = {
+            id: `msg-${Date.now() + 1}`,
+            content: "Thank you for your message. Let me help you with that. Can you provide more details?",
+            timestamp: new Date(),
+            sender: 'agent',
+            agentId: currentSession.agentId,
+            agentName: currentSession.agentName
+          }
+
+          setCurrentSession(prev => prev ? {
+            ...prev,
+            messages: [...prev.messages, agentResponse],
+            updatedAt: new Date()
+          } : null)
+        }, 1000)
+      }
     }
   }
 
   const handleEndSession = () => {
-    if (currentSession && connected) {
-      leaveAgentRoom(currentSession.agentId)
+    if (currentSession) {
+      if (useFetchAIAgents) {
+        fetchAIDisconnectFromAgent(currentSession.agentId)
+      } else if (connected) {
+        leaveAgentRoom(currentSession.agentId)
+      }
     }
     setCurrentSession(null)
     setSelectedAgentId(undefined)
@@ -201,18 +293,60 @@ export function ChatDashboard({ onStartNewChat }: ChatDashboardProps) {
     <div className="flex h-full">
       {showAgentList ? (
         <div className="flex-1 flex">
-          <div className="w-96 border-r">
-            <AgentList
-              agents={agents}
-              onStartChat={handleStartChat}
-              selectedAgentId={selectedAgentId}
-            />
+          <div className="w-96 border-r flex flex-col">
+            {/* Agent Type Toggle */}
+            <div className="p-4 border-b">
+              <div className="flex gap-2">
+                <Button
+                  variant={!useFetchAIAgents ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setUseFetchAIAgents(false)}
+                  className="flex-1"
+                >
+                  <Bot className="h-4 w-4 mr-2" />
+                  Regular Agents
+                </Button>
+                <Button
+                  variant={useFetchAIAgents ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setUseFetchAIAgents(true)}
+                  className="flex-1"
+                >
+                  <Zap className="h-4 w-4 mr-2" />
+                  Fetch.ai Agents
+                </Button>
+              </div>
+            </div>
+            
+            {/* Agent List */}
+            <div className="flex-1">
+              {useFetchAIAgents ? (
+                <FetchAIAgentList
+                  agents={fetchAIAgents}
+                  onStartChat={handleStartChat}
+                  onRefresh={refreshFetchAIAgents}
+                  loading={fetchAILoading}
+                  selectedAgentId={selectedAgentId}
+                />
+              ) : (
+                <AgentList
+                  agents={agents}
+                  onStartChat={handleStartChat}
+                  selectedAgentId={selectedAgentId}
+                />
+              )}
+            </div>
           </div>
           <div className="flex-1 flex items-center justify-center bg-muted/50">
             <div className="text-center">
-              <h3 className="text-lg font-semibold mb-2">Select an Agent</h3>
+              <h3 className="text-lg font-semibold mb-2">
+                {useFetchAIAgents ? 'Select a Fetch.ai Agent' : 'Select an Agent'}
+              </h3>
               <p className="text-muted-foreground mb-4">
-                Choose an available agent to start a conversation
+                {useFetchAIAgents 
+                  ? 'Choose from autonomous Fetch.ai agents with specialized capabilities'
+                  : 'Choose an available agent to start a conversation'
+                }
               </p>
               <Button onClick={onStartNewChat}>
                 <Plus className="h-4 w-4 mr-2" />

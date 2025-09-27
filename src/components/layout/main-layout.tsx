@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Sidebar } from './sidebar'
 import { ChatDashboard } from '@/components/dashboard/chat-dashboard'
+import { AnalyticsDashboard } from '@/components/analytics/analytics-dashboard'
 import { Button } from '@/components/ui/button'
 import { MessageCircle, Users, BarChart3, Bell, Settings } from 'lucide-react'
 
@@ -24,15 +25,7 @@ export function MainLayout() {
           </div>
         )
       case 'analytics':
-        return (
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-center">
-              <BarChart3 className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-              <h3 className="text-lg font-semibold mb-2">Analytics Dashboard</h3>
-              <p className="text-muted-foreground">View chat metrics and performance data</p>
-            </div>
-          </div>
-        )
+        return <AnalyticsDashboard />
       case 'notifications':
         return (
           <div className="flex-1 flex items-center justify-center">

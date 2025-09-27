@@ -45,7 +45,7 @@ class AgentStatus(Model):
 # Create the agent
 agent = Agent(
     name="blockchain_chatbot_agent",
-    seed="your_secret_seed_phrase_here",  # Replace with your actual seed phrase
+    seed="demo_seed_phrase_for_local_development_only",  # Demo seed for local development
     endpoint="127.0.0.1:8001",  # Adjust port as needed
     port=8001
 )
@@ -192,17 +192,17 @@ async def get_capabilities():
         "agent_id": agent.address
     }
 
-async def run_agent_and_api():
+def run_agent_and_api():
     """Run both the agent and the HTTP API"""
-    # Start the HTTP API server
-    config = uvicorn.Config(app, host="127.0.0.1", port=8001, log_level="info")
-    server = uvicorn.Server(config)
+    import threading
     
-    # Run both concurrently
-    await asyncio.gather(
-        agent.run(),
-        server.serve()
-    )
+    # Start the agent in a separate thread
+    agent_thread = threading.Thread(target=lambda: agent.run())
+    agent_thread.daemon = True
+    agent_thread.start()
+    
+    # Start the HTTP API server in the main thread
+    uvicorn.run(app, host="127.0.0.1", port=8001, log_level="info")
 
 if __name__ == "__main__":
     print("Starting Fetch.ai Agent for AgentChat...")
@@ -211,12 +211,8 @@ if __name__ == "__main__":
     print("2. Install required packages: pip install uagents fastapi uvicorn")
     print("3. Ensure your agent has sufficient FET tokens for operation")
     
-    # Fund the agent if needed
-    try:
-        fund_agent_if_low(agent.wallet.address())
-    except Exception as e:
-        print(f"Warning: Could not fund agent: {e}")
-        print("Make sure your agent has sufficient FET tokens")
+    # Note: For local development, we don't need to fund the agent
+    print("Running in local development mode - no FET tokens required")
     
-    # Run the agent
-    asyncio.run(run_agent_and_api())
+    # Run the agent and API
+    run_agent_and_api()
