@@ -61,3 +61,42 @@ body {
     text-wrap: balance;
   }
 }
+
+/* Smooth transitions for theme changes */
+* {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+/* RainbowKit dark mode compatibility */
+[data-rk] {
+  --rk-colors-accentColor: hsl(var(--primary));
+  --rk-colors-accentColorForeground: hsl(var(--primary-foreground));
+  --rk-colors-actionButtonBorder: hsl(var(--border));
+  --rk-colors-actionButtonBorderMobile: hsl(var(--border));
+  --rk-colors-actionButtonSecondaryBackground: hsl(var(--secondary));
+  --rk-colors-closeButton: hsl(var(--muted-foreground));
+  --rk-colors-closeButtonBackground: hsl(var(--muted));
+  --rk-colors-connectButtonBackground: hsl(var(--background));
+  --rk-colors-connectButtonBackgroundError: hsl(var(--destructive));
+  --rk-colors-connectButtonInnerBackground: hsl(var(--background));
+  --rk-colors-connectButtonText: hsl(var(--foreground));
+  --rk-colors-connectButtonTextError: hsl(var(--destructive-foreground));
+  --rk-colors-connectionIndicator: hsl(var(--primary));
+  --rk-colors-downloadBottomCardBackground: hsl(var(--card));
+  --rk-colors-downloadTopCardBackground: hsl(var(--card));
+  --rk-colors-error: hsl(var(--destructive));
+  --rk-colors-generalBorder: hsl(var(--border));
+  --rk-colors-generalBorderDim: hsl(var(--border));
+  --rk-colors-menuItemBackground: hsl(var(--muted));
+  --rk-colors-modalBackdrop: rgba(0, 0, 0, 0.5);
+  --rk-colors-modalBackground: hsl(var(--background));
+  --rk-colors-modalBorder: hsl(var(--border));
+  --rk-colors-modalText: hsl(var(--foreground));
+  --rk-colors-modalTextDim: hsl(var(--muted-foreground));
+  --rk-colors-modalTextSecondary: hsl(var(--muted-foreground));
+  --rk-colors-profileAction: hsl(var(--muted));
+  --rk-colors-profileActionHover: hsl(var(--accent));
+  --rk-colors-profileForeground: hsl(var(--foreground));
+  --rk-colors-selectedOptionBorder: hsl(var(--primary));
+  --rk-colors-standby: hsl(var(--muted-foreground));
+}

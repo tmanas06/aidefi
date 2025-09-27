@@ -7,6 +7,7 @@ import { MessageInput } from './message-input'
 import { BlockchainActions } from './blockchain-actions'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { Bot, Phone, Video, MoreVertical, X, Coins } from 'lucide-react'
 
 interface ChatInterfaceProps {
@@ -73,6 +74,7 @@ export function ChatInterface({ session, onSendMessage, onEndSession, onTransfer
           <Button variant="ghost" size="icon">
             <Video className="h-4 w-4" />
           </Button>
+          <ThemeToggle />
           <div className="relative">
             <Button 
               variant="ghost" 

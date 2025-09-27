@@ -6,6 +6,7 @@ import { MessageCircle, Settings, BarChart3, Users, Bell } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { WalletConnect } from '@/components/wallet/wallet-connect'
 import { WalletStatus } from '@/components/wallet/wallet-status'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
 
 interface SidebarProps {
   activeTab: string
@@ -24,8 +25,13 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
   return (
     <div className="w-64 bg-background border-r flex flex-col">
       <div className="p-6 border-b">
-        <h1 className="text-xl font-bold">AgentChat</h1>
-        <p className="text-sm text-muted-foreground">B2C Agent Communication</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-bold">AgentChat</h1>
+            <p className="text-sm text-muted-foreground">B2C Agent Communication</p>
+          </div>
+          <ThemeToggle />
+        </div>
       </div>
       
       <nav className="flex-1 p-4">
