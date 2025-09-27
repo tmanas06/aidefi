@@ -15,9 +15,10 @@ interface ChatInterfaceProps {
   onSendMessage: (message: string) => void
   onEndSession: () => void
   onTransferAgent: () => void
+  onBack?: () => void
 }
 
-export function ChatInterface({ session, onSendMessage, onEndSession, onTransferAgent }: ChatInterfaceProps) {
+export function ChatInterface({ session, onSendMessage, onEndSession, onTransferAgent, onBack }: ChatInterfaceProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [showOptions, setShowOptions] = useState(false)
   const [showBlockchainActions, setShowBlockchainActions] = useState(false)

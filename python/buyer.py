@@ -1,14 +1,31 @@
 import os
+import threading
 import requests
 from web3 import Web3
 from eth_account import Account
 from dotenv import load_dotenv
+from uagents import Agent, Context
 
 load_dotenv()
 
 RPC_URL = os.getenv("RPC_URL")
 PRIVATE_KEY = os.getenv("BUYER_PRIVATE_KEY")
-MERCHANT_URL = "http://127.0.0.1:8001"
+
+# Create uagents buyer agent using private key
+buyer_agent = Agent(
+    name="buyer",
+    seed=PRIVATE_KEY,
+    port=8000,
+    endpoint=["http://localhost:8000/submit"],
+    publish_agent_details=True
+)
+
+# startup handler
+@buyer_agent.on_event("startup")
+async def startup_function(ctx: Context):
+    ctx.logger.info(f"Hello, I'm buyer agent {buyer_agent.name} and my address is {buyer_agent.address}.")
+
+MERCHANT_URL = "http://127.0.0.1:8003"
 
 w3 = Web3(Web3.HTTPProvider(RPC_URL))
 acct = Account.from_key(PRIVATE_KEY)
@@ -67,5 +84,17 @@ def buy_item(item_id: int):
     print("Merchant verification:", retry.json())
 
 
+def run_buyer_agent():
+    """Run the buyer agent"""
+    # Start the buyer agent
+    buyer_agent.run()
+
 if __name__ == "__main__":
-    buy_item(1)  # try buying Crypto Hoodie
+    print("🚀 Starting Buyer Agent with uagents...")
+    print(f"📍 Agent Name: {buyer_agent.name}")
+    print(f"🔗 Agent Address: {buyer_agent.address}")
+    print(f"⚡ Agent Port: 8000")
+    print("🛒 Running purchase simulation...")
+    
+    # Start the buyer agent
+    run_buyer_agent()

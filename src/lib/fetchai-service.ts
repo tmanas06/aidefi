@@ -54,44 +54,84 @@ export class FetchAIService {
   private getLocalAgents(): FetchAIAgent[] {
     return [
       {
-        id: 'fetch-agent-1',
-        name: 'Fetch.ai Customer Service Agent',
-        description: 'Specialized in customer support with blockchain knowledge',
-        endpoint: '127.0.0.1',
-        port: 8001,
-        capabilities: ['customer_service', 'blockchain_support', 'defi_advice'],
-        status: 'online',
-        price: 0.1
-      },
-      {
-        id: 'fetch-agent-2',
-        name: 'Fetch.ai Trading Assistant',
-        description: 'Provides trading insights and market analysis',
-        endpoint: '127.0.0.1',
-        port: 8002,
-        capabilities: ['trading_analysis', 'market_research', 'portfolio_management'],
-        status: 'online',
-        price: 0.2
-      },
-      {
-        id: 'fetch-agent-3',
-        name: 'Fetch.ai DeFi Expert',
-        description: 'Expert in decentralized finance protocols and yield farming',
+        id: 'merchant-agent',
+        name: 'Merchant Agent',
+        description: 'E-commerce marketplace agent for product browsing and purchasing',
         endpoint: '127.0.0.1',
         port: 8003,
-        capabilities: ['defi_protocols', 'yield_farming', 'liquidity_providing'],
+        capabilities: ['ecommerce', 'product_search', 'purchase_processing', 'payment_verification'],
         status: 'online',
-        price: 0.15
+        price: 0.0
       },
       {
-        id: 'fetch-agent-4',
-        name: 'Fetch.ai General Assistant',
-        description: 'General purpose AI assistant with Web3 knowledge',
+        id: 'buyer-agent',
+        name: 'Me',
+        description: 'Your personal agent for handling blockchain transactions and payments',
         endpoint: '127.0.0.1',
-        port: 8004,
-        capabilities: ['general_questions', 'web3_education', 'blockchain_explanation'],
+        port: 8000,
+        capabilities: ['blockchain_transactions', 'payment_processing', 'wallet_management', 'personal_assistant'],
         status: 'online',
-        price: 0.05
+        price: 0.0
+      },
+      {
+        id: 'crypto-guru',
+        name: 'Crypto Guru',
+        description: 'Expert in cryptocurrency analysis and market predictions',
+        endpoint: '127.0.0.1',
+        port: 8001,
+        capabilities: ['market_analysis', 'price_prediction', 'crypto_education', 'portfolio_advice'],
+        status: 'online',
+        price: 1.5
+      },
+      {
+        id: 'nft-curator',
+        name: 'NFT Curator',
+        description: 'Specializes in NFT discovery, valuation, and collection management',
+        endpoint: '127.0.0.1',
+        port: 8002,
+        capabilities: ['nft_discovery', 'valuation', 'collection_management', 'marketplace_navigation'],
+        status: 'online',
+        price: 1.0
+      },
+      {
+        id: 'defi-strategist',
+        name: 'DeFi Strategist',
+        description: 'Expert in DeFi protocols, yield farming, and liquidity management',
+        endpoint: '127.0.0.1',
+        port: 8005,
+        capabilities: ['defi_strategies', 'yield_optimization', 'risk_assessment', 'liquidity_provision'],
+        status: 'online',
+        price: 2.5
+      },
+      {
+        id: 'blockchain-developer',
+        name: 'Blockchain Developer',
+        description: 'Smart contract development and blockchain architecture expert',
+        endpoint: '127.0.0.1',
+        port: 8006,
+        capabilities: ['smart_contracts', 'dapp_development', 'blockchain_architecture', 'code_review'],
+        status: 'online',
+        price: 3.0
+      },
+      {
+        id: 'security-auditor',
+        name: 'Security Auditor',
+        description: 'Blockchain security expert specializing in smart contract audits',
+        endpoint: '127.0.0.1',
+        port: 8007,
+        capabilities: ['security_audits', 'vulnerability_assessment', 'best_practices', 'risk_mitigation'],
+        status: 'online',
+        price: 4.0
+      },
+      {
+        id: 'community-manager',
+        name: 'Community Manager',
+        description: 'Social media and community engagement specialist for crypto projects',
+        endpoint: '127.0.0.1',
+        port: 8008,
+        capabilities: ['social_media', 'community_building', 'content_creation', 'engagement_analysis'],
+        status: 'online',
+        price: 0.8
       }
     ]
   }

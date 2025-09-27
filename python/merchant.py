@@ -1,10 +1,27 @@
 import os
+import threading
 from fastapi import FastAPI, HTTPException
 from web3 import Web3
 from dotenv import load_dotenv
 import uvicorn
+from uagents import Agent, Context
 
 load_dotenv()
+
+# Create uagents merchant agent using private key
+MERCHANT_PRIVATE_KEY = os.getenv("MERCHANT_PRIVATE_KEY")
+merchant_agent = Agent(
+    name="merchant",
+    seed=MERCHANT_PRIVATE_KEY,
+    port=8003,
+    endpoint=["http://localhost:8003/submit"],
+    publish_agent_details=True
+)
+
+# startup handler
+@merchant_agent.on_event("startup")
+async def startup_function(ctx: Context):
+    ctx.logger.info(f"Hello, I'm merchant agent {merchant_agent.name} and my address is {merchant_agent.address}.")
 
 app = FastAPI(title="Merchant Agent")
 
@@ -100,5 +117,22 @@ def retry_purchase(request: dict):
         return {"status": "failed", "message": "Payment not found or incorrect ❌"}
 
 
+def run_merchant_and_api():
+    """Run both the merchant agent and the HTTP API"""
+    # Start the merchant agent in a separate thread
+    agent_thread = threading.Thread(target=lambda: merchant_agent.run())
+    agent_thread.daemon = True
+    agent_thread.start()
+    
+    # Start the HTTP API server in the main thread
+    uvicorn.run(app, host="127.0.0.1", port=8003, log_level="info")
+
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8001)
+    print("🚀 Starting Merchant Agent with uagents...")
+    print(f"📍 Agent Name: {merchant_agent.name}")
+    print(f"🔗 Agent Address: {merchant_agent.address}")
+    print(f"⚡ Agent Port: 8003")
+    print(f"🌐 API will be available at: http://127.0.0.1:8003")
+    
+    # Run both the agent and API
+    run_merchant_and_api()

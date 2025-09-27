@@ -33,17 +33,18 @@ The frontend now includes a complete e-commerce marketplace that integrates with
 cd python
 python merchant.py
 ```
-The merchant service will run on `http://127.0.0.1:8001`
+The merchant service will run on `http://127.0.0.1:8003`
 
 ### **2. Configure Environment Variables**
 Create a `.env.local` file in your project root:
 ```env
 # Merchant Service Configuration
-NEXT_PUBLIC_MERCHANT_URL=http://127.0.0.1:8001
+NEXT_PUBLIC_MERCHANT_URL=http://127.0.0.1:8003
 
 # Blockchain Configuration (for Rootstock)
 RPC_URL=https://rpc.testnet.rootstock.io
 MERCHANT_ADDRESS=your_merchant_wallet_address
+MERCHANT_PRIVATE_KEY=your_merchant_private_key
 RUSDT_CONTRACT=your_rusdt_contract_address
 BUYER_PRIVATE_KEY=your_buyer_private_key
 ```
