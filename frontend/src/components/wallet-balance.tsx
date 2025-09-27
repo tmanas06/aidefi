@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { transactionService, WalletBalance } from '@/lib/transaction-service'
+import { SendModal } from '@/components/send-modal'
 import { Wallet, TrendingUp, TrendingDown, RefreshCw } from 'lucide-react'
 
 interface WalletBalanceProps {
@@ -12,6 +13,7 @@ export function WalletBalance({ address }: WalletBalanceProps) {
   const [balance, setBalance] = useState<WalletBalance | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isRefreshing, setIsRefreshing] = useState(false)
+  const [showSendModal, setShowSendModal] = useState(false)
 
   const loadBalance = async () => {
     try {
@@ -28,6 +30,11 @@ export function WalletBalance({ address }: WalletBalanceProps) {
     setIsRefreshing(true)
     await loadBalance()
     setIsRefreshing(false)
+  }
+
+  const handleTransactionSent = () => {
+    // Refresh balance after transaction
+    refreshBalance()
   }
 
   useEffect(() => {
@@ -114,7 +121,10 @@ export function WalletBalance({ address }: WalletBalanceProps) {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-2 gap-3">
-        <button className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-kadena-500/20 to-kadena-600/20 hover:from-kadena-500/30 hover:to-kadena-600/30 border border-kadena-500/30 rounded-lg text-kadena-300 hover:text-white transition-all duration-300">
+        <button 
+          onClick={() => setShowSendModal(true)}
+          className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-kadena-500/20 to-kadena-600/20 hover:from-kadena-500/30 hover:to-kadena-600/30 border border-kadena-500/30 rounded-lg text-kadena-300 hover:text-white transition-all duration-300"
+        >
           <Wallet className="h-4 w-4" />
           <span className="text-sm font-medium">Send</span>
         </button>
@@ -123,6 +133,13 @@ export function WalletBalance({ address }: WalletBalanceProps) {
           <span className="text-sm font-medium">Receive</span>
         </button>
       </div>
+
+      {/* Send Modal */}
+      <SendModal 
+        isOpen={showSendModal}
+        onClose={() => setShowSendModal(false)}
+        onTransactionSent={handleTransactionSent}
+      />
     </div>
   )
 }

@@ -1,41 +1,30 @@
+'use client'
+
+import { SwapInterface } from '@/components/swap-interface'
+import { WalletBalance } from '@/components/wallet-balance'
+import { MetaMaskConnect } from '@/components/metamask-connect'
+import { WalletInstructions } from '@/components/wallet-instructions'
+import { WalletTest } from '@/components/wallet-test'
+import { DebugInfo } from '@/components/debug-info'
+import { MainLayout } from '@/components/layout/main-layout'
+import { useAccount, useChainId } from 'wagmi'
+
 export default function Dashboard() {
+  const { address, isConnected } = useAccount()
+  const chainId = useChainId()
+  const isKadenaNetwork = chainId === 5920
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      {/* Header */}
-      <header className="bg-gray-900/50 backdrop-blur-sm border-b border-gray-700/50">
-        <div className="flex h-16 items-center justify-between px-6">
-          <div className="flex items-center gap-4">
-            <h1 className="text-2xl font-bold text-white">AI DeFi Dashboard</h1>
-            <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/20 border border-green-500/30">
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              <span className="text-sm text-green-400 font-medium">Live</span>
-            </div>
-          </div>
-          <button className="px-6 py-3 bg-kadena-500 hover:bg-kadena-600 text-white rounded-lg transition-colors">
-            Connect Wallet
-          </button>
-        </div>
-      </header>
+    <MainLayout title="Dashboard" subtitle="AI DeFi Platform">
+      <div className="space-y-8">
+                {/* Wallet Connection */}
+                {!isConnected && (
+                  <div className="mb-6">
+                    <MetaMaskConnect />
+                  </div>
+                )}
 
-      <div className="flex">
-        {/* Sidebar */}
-        <div className="w-64 bg-gray-800/50 border-r border-gray-700/50 min-h-screen">
-          <div className="p-6">
-            <h2 className="text-lg font-semibold text-white mb-4">Navigation</h2>
-            <nav className="space-y-2">
-              <a href="/" className="block px-3 py-2 text-kadena-400 bg-kadena-500/20 rounded-lg">Dashboard</a>
-              <a href="/agents" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-lg">AI Agents</a>
-              <a href="/analytics" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-lg">Analytics</a>
-              <a href="/payments" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-lg">Payments</a>
-            </nav>
-          </div>
-        </div>
-
-        {/* Main Content */}
-        <main className="flex-1 p-6">
-          <div className="space-y-8">
-            {/* Welcome Section */}
-            <div className="bg-gradient-to-r from-kadena-500/10 to-purple-500/10 rounded-2xl p-8 border border-kadena-500/20">
+                {/* Welcome Section */}
+                <div className="bg-gradient-to-r from-kadena-500/10 to-purple-500/10 rounded-2xl p-8 border border-kadena-500/20">
               <h2 className="text-3xl font-bold text-white mb-4">
                 Welcome to AI DeFi
               </h2>
@@ -54,6 +43,26 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
+
+                {/* Wallet and Swap Interface */}
+                {isConnected && address && isKadenaNetwork && (
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <WalletBalance address={address} />
+                    <SwapInterface />
+                  </div>
+                )}
+
+                {/* Wallet Instructions for disconnected users */}
+                {!isConnected && (
+                  <div className="max-w-2xl mx-auto">
+                    <WalletInstructions />
+                  </div>
+                )}
+
+                {/* Wallet Test Component */}
+                <div className="max-w-4xl mx-auto">
+                  <WalletTest />
+                </div>
 
             {/* Overview Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -97,9 +106,9 @@ export default function Dashboard() {
                 </button>
               </div>
             </div>
-          </div>
-        </main>
       </div>
-    </div>
+      
+      <DebugInfo />
+    </MainLayout>
   )
 }

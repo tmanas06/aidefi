@@ -2,7 +2,6 @@
 
 import { ReactNode } from 'react'
 import { Sidebar } from '@/components/sidebar'
-import { SimpleWalletConnect } from '@/components/simple-wallet-connect'
 import { useAccount } from 'wagmi'
 import { Bot, Zap, Shield, Activity } from 'lucide-react'
 
@@ -19,7 +18,7 @@ export function MainLayout({
   subtitle, 
   showHeader = true 
 }: MainLayoutProps) {
-  const { isConnected } = useAccount()
+  const { address, isConnected } = useAccount()
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
@@ -67,7 +66,19 @@ export function MainLayout({
                 )}
               </div>
               
-              <SimpleWalletConnect />
+              {isConnected ? (
+                <div className="flex items-center gap-2 px-4 py-2 bg-green-500/20 border border-green-500/30 rounded-lg">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                  <span className="text-sm text-green-400 font-medium">
+                    {address ? `${address.slice(0, 6)}...${address.slice(-4)}` : 'Connected'}
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 px-4 py-2 bg-gray-600/20 border border-gray-600/30 rounded-lg">
+                  <div className="w-2 h-2 bg-gray-400 rounded-full" />
+                  <span className="text-sm text-gray-400 font-medium">Not Connected</span>
+                </div>
+              )}
             </div>
           </div>
         </header>

@@ -9,6 +9,17 @@ dotenvConfig();
 
 const config: HardhatUserConfig = {
   solidity: '0.8.28',
+  networks: {
+    hardhat: {
+      chainId: 31337,
+    },
+    kadenaTestnet: {
+      url: 'https://evm-testnet.chainweb.com/chainweb/0.0/evm-testnet/chain/20/evm/rpc',
+      chainId: 5920,
+      accounts: process.env.DEPLOYER_PRIVATE_KEY ? [process.env.DEPLOYER_PRIVATE_KEY] : [],
+      gasPrice: 'auto',
+    },
+  },
   chainweb: {
     hardhat: {
       chains: 2,
@@ -18,7 +29,7 @@ const config: HardhatUserConfig = {
     },
     testnet: {
       type: 'external',
-      chains: 5,
+      chains: 1,
       accounts: [process.env.DEPLOYER_PRIVATE_KEY ?? ''],
       chainIdOffset: 5920,
       chainwebChainIdOffset: 20,
@@ -32,6 +43,21 @@ const config: HardhatUserConfig = {
           'https://chain-{cid}.evm-testnet-blockscout.chainweb.com',
       },
     },
+  },
+  etherscan: {
+    apiKey: {
+      kadenaTestnet: 'abc', // Any non-empty string works for Blockscout
+    },
+    customChains: [
+      {
+        network: 'kadenaTestnet',
+        chainId: 5920,
+        urls: {
+          apiURL: 'https://chain-20.evm-testnet-blockscout.chainweb.com/api/',
+          browserURL: 'https://chain-20.evm-testnet-blockscout.chainweb.com',
+        },
+      },
+    ],
   },
 };
 

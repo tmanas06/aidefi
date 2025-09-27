@@ -38,7 +38,7 @@ const kadenaTestnet = {
 
 const config = getDefaultConfig({
   appName: 'AI DeFi Kadena dApp',
-  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'your-project-id',
+  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'demo-project-id',
   chains: [kadenaTestnet, mainnet, polygon, arbitrum, base, sepolia],
   transports: {
     [kadenaTestnet.id]: http(),

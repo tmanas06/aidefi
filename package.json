@@ -21,14 +21,17 @@
     "verify:testnet": "npx hardhat verify --network chainwebTestnet"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2",
-    "@nomicfoundation/hardhat-toolbox": "^6.1.0",
     "@kadena/hardhat-chainweb": "^1.5.1",
-    "hardhat": "^2.22.0",
-    "@openzeppelin/contracts": "^4.9.0"
+    "@nomicfoundation/hardhat-toolbox": "^6.1.0",
+    "@openzeppelin/contracts": "^4.9.0",
+    "concurrently": "^8.2.2",
+    "hardhat": "^2.22.0"
   },
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
+  },
+  "dependencies": {
+    "@kadena/hardhat-kadena-create2": "^1.1.1"
   }
 }
