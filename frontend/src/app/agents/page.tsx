@@ -5,7 +5,7 @@ export default function AgentsPage() {
       <header className="bg-gray-900/50 backdrop-blur-sm border-b border-gray-700/50">
         <div className="flex h-16 items-center justify-between px-6">
           <div className="flex items-center gap-4">
-              <h1 className="text-2xl font-bold text-white">AI Agents</h1>
+            <h1 className="text-2xl font-bold text-white">AI Agents</h1>
             <div className="px-3 py-1 bg-kadena-500/20 text-kadena-400 border border-kadena-500/30 rounded-full text-sm">
               3 Agents
             </div>
@@ -13,8 +13,8 @@ export default function AgentsPage() {
           <button className="px-6 py-3 bg-kadena-500 hover:bg-kadena-600 text-white rounded-lg transition-colors">
             Create Agent
           </button>
-          </div>
-        </header>
+        </div>
+      </header>
 
       <div className="flex">
         {/* Sidebar */}
@@ -27,9 +27,9 @@ export default function AgentsPage() {
               <a href="/analytics" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-lg">Analytics</a>
               <a href="/payments" className="block px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700/50 rounded-lg">Payments</a>
             </nav>
-                    </div>
-                  </div>
-                  
+          </div>
+        </div>
+
         {/* Main Content */}
         <main className="flex-1 p-6">
           <div className="space-y-8">
@@ -54,7 +54,7 @@ export default function AgentsPage() {
                 <h3 className="text-sm font-medium text-gray-400 mb-2">Active Agents</h3>
                 <p className="text-2xl font-bold text-purple-400">2</p>
                 <p className="text-sm text-purple-400">67% uptime</p>
-                  </div>
+              </div>
             </div>
 
             {/* Agents List */}
@@ -90,10 +90,10 @@ export default function AgentsPage() {
               ].map((agent) => (
                 <div key={agent.id} className="p-6 bg-gray-800/50 rounded-xl border border-gray-700/50 hover:shadow-lg hover:shadow-kadena-500/10 transition-all duration-300">
                   <div className="flex items-center justify-between mb-4">
-                      <div>
+                    <div>
                       <h3 className="text-lg font-semibold text-white">{agent.name}</h3>
                       <p className="text-sm text-gray-400">{agent.strategy}</p>
-                      </div>
+                    </div>
                     <div className={`px-3 py-1 rounded-full text-sm ${
                       agent.status === 'active' 
                         ? 'bg-green-500/20 text-green-400 border border-green-500/30'
@@ -102,7 +102,7 @@ export default function AgentsPage() {
                       {agent.status}
                     </div>
                   </div>
-                  
+
                   <div className="grid grid-cols-2 gap-4 mb-4">
                     <div className="text-center p-3 bg-gray-700/50 rounded-lg">
                       <div className="text-sm text-gray-400 mb-1">Performance</div>
@@ -116,11 +116,11 @@ export default function AgentsPage() {
                     <div className="text-center p-3 bg-gray-700/50 rounded-lg">
                       <div className="text-sm text-gray-400 mb-1">Trades</div>
                       <div className="text-xl font-bold text-white">{agent.trades}</div>
-                  </div>
+                    </div>
                     <div className="text-center p-3 bg-gray-700/50 rounded-lg">
                       <div className="text-sm text-gray-400 mb-1">Profit</div>
                       <div className="text-xl font-bold text-green-400">{agent.profit}</div>
-                      </div>
+                    </div>
                     <div className="text-center p-3 bg-gray-700/50 rounded-lg">
                       <div className="text-sm text-gray-400 mb-1">Status</div>
                       <div className="text-xl font-bold text-white">{agent.status}</div>
@@ -135,7 +135,7 @@ export default function AgentsPage() {
                       Details
                     </button>
                   </div>
-                  </div>
+                </div>
               ))}
             </div>
           </div>
