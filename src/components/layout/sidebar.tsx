@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { MessageCircle, Settings, BarChart3, Users, Bell } from 'lucide-react'
+import { MessageCircle, Settings, BarChart3, Users, Bell, ShoppingBag } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { WalletConnect } from '@/components/wallet/wallet-connect'
 import { WalletStatus } from '@/components/wallet/wallet-status'
@@ -18,6 +18,7 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
     { id: 'chat', label: 'Chat', icon: MessageCircle },
     { id: 'agents', label: 'Agents', icon: Users },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
+    { id: 'marketplace', label: 'Marketplace', icon: ShoppingBag },
     { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'settings', label: 'Settings', icon: Settings },
   ]

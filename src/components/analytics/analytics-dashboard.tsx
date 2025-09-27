@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount, useChainId } from 'wagmi'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -10,12 +10,14 @@ import { PortfolioSummaryComponent } from './portfolio-summary'
 import { NFTGallery } from './nft-gallery'
 import { TransactionHistory } from './transaction-history'
 import { PortfolioChart } from './portfolio-chart'
+import { NetworkInfo } from '@/components/ui/network-info'
 import { analyticsService, PortfolioSummary } from '@/lib/analytics-service'
 import { ClientOnly } from '@/components/ui/client-only'
 import { Search, RefreshCw, Download, Share2 } from 'lucide-react'
 
 export function AnalyticsDashboard() {
   const { address, isConnected } = useAccount()
+  const chainId = useChainId()
   const [inputAddress, setInputAddress] = useState('')
   const [currentAddress, setCurrentAddress] = useState('')
   const [loading, setLoading] = useState(false)
@@ -24,15 +26,24 @@ export function AnalyticsDashboard() {
   const [portfolioSummary, setPortfolioSummary] = useState<PortfolioSummary | null>(null)
   const [portfolioHistory, setPortfolioHistory] = useState<Array<{date: string, value: number}>>([])
 
-  // Use connected wallet address as default
+  // Use connected wallet address as default and set chain
   useEffect(() => {
     if (isConnected && address && !currentAddress) {
       setInputAddress(address)
       setCurrentAddress(address)
+      // Set the current chain for analytics service
+      analyticsService.setCurrentChain(chainId)
       // Delay fetch to prevent hydration issues
       setTimeout(() => fetchPortfolioData(address), 100)
     }
-  }, [isConnected, address, currentAddress])
+  }, [isConnected, address, currentAddress, chainId])
+
+  // Update analytics service when chain changes
+  useEffect(() => {
+    if (isConnected) {
+      analyticsService.setCurrentChain(chainId)
+    }
+  }, [chainId, isConnected])
 
   const fetchPortfolioData = async (address: string) => {
     if (!address) return
@@ -142,6 +153,11 @@ export function AnalyticsDashboard() {
           </CardContent>
         </Card>
       )}
+
+      {/* Network Information */}
+      <ClientOnly>
+        <NetworkInfo />
+      </ClientOnly>
 
       {/* Analytics Content */}
       {currentAddress && (

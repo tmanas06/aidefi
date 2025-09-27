@@ -4,8 +4,9 @@ import { useState } from 'react'
 import { Sidebar } from './sidebar'
 import { ChatDashboard } from '@/components/dashboard/chat-dashboard'
 import { AnalyticsDashboard } from '@/components/analytics/analytics-dashboard'
+import { EcommerceDashboard } from '@/components/ecommerce/ecommerce-dashboard'
 import { Button } from '@/components/ui/button'
-import { MessageCircle, Users, BarChart3, Bell, Settings } from 'lucide-react'
+import { MessageCircle, Users, BarChart3, Bell, Settings, ShoppingBag } from 'lucide-react'
 
 export function MainLayout() {
   const [activeTab, setActiveTab] = useState('chat')
@@ -26,6 +27,8 @@ export function MainLayout() {
         )
       case 'analytics':
         return <AnalyticsDashboard />
+      case 'marketplace':
+        return <EcommerceDashboard />
       case 'notifications':
         return (
           <div className="flex-1 flex items-center justify-center">
@@ -55,7 +58,9 @@ export function MainLayout() {
     <div className="flex h-screen bg-background">
       <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
       <main className="flex-1 overflow-hidden">
-        {renderContent()}
+        <div className="h-full overflow-auto p-6">
+          {renderContent()}
+        </div>
       </main>
     </div>
   )

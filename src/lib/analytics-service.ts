@@ -1,5 +1,6 @@
 import { Alchemy, Network, NftTokenType } from 'alchemy-sdk'
 import axios from 'axios'
+import { RPC_CONFIGS, getRPCConfig } from './rpc-config'
 
 // Types for portfolio data
 export interface TokenBalance {
@@ -81,6 +82,77 @@ const alchemy = new Alchemy(ALCHEMY_CONFIG)
 export class AnalyticsService {
   private cache: Map<string, any> = new Map()
   private cacheTimeout = 5 * 60 * 1000 // 5 minutes
+  private currentChainId: number = 1 // Default to Ethereum mainnet
+  private alchemyInstances: Map<number, Alchemy> = new Map()
+
+  // Set the current chain for analytics
+  setCurrentChain(chainId: number) {
+    this.currentChainId = chainId
+    this.initializeAlchemyForChain(chainId)
+  }
+
+  // Initialize Alchemy instance for specific chain
+  private initializeAlchemyForChain(chainId: number) {
+    if (this.alchemyInstances.has(chainId)) {
+      return this.alchemyInstances.get(chainId)!
+    }
+
+    let network: Network
+    let apiKey = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY || 'demo'
+
+    switch (chainId) {
+      case 1: // Ethereum Mainnet
+        network = Network.ETH_MAINNET
+        break
+      case 11155111: // Ethereum Sepolia
+        network = Network.ETH_SEPOLIA
+        break
+      case 137: // Polygon Mainnet
+        network = Network.MATIC_MAINNET
+        break
+      case 80001: // Polygon Mumbai
+        network = Network.MATIC_MUMBAI
+        break
+      case 42161: // Arbitrum Mainnet
+        network = Network.ARB_MAINNET
+        break
+      case 421614: // Arbitrum Sepolia
+        network = Network.ARB_SEPOLIA
+        break
+      case 10: // Optimism Mainnet
+        network = Network.OPT_MAINNET
+        break
+      case 11155420: // Optimism Sepolia
+        network = Network.OPT_SEPOLIA
+        break
+      case 8453: // Base Mainnet
+        network = Network.BASE_MAINNET
+        break
+      case 84532: // Base Sepolia
+        network = Network.BASE_SEPOLIA
+        break
+      default:
+        // For unsupported chains, use Ethereum mainnet as fallback
+        network = Network.ETH_MAINNET
+        break
+    }
+
+    const alchemy = new Alchemy({
+      apiKey,
+      network,
+    })
+
+    this.alchemyInstances.set(chainId, alchemy)
+    return alchemy
+  }
+
+  // Get Alchemy instance for current chain
+  private getAlchemy(): Alchemy {
+    if (!this.alchemyInstances.has(this.currentChainId)) {
+      return this.initializeAlchemyForChain(this.currentChainId)
+    }
+    return this.alchemyInstances.get(this.currentChainId)!
+  }
 
   // Get cached data or fetch new
   private async getCachedOrFetch<T>(
@@ -104,8 +176,9 @@ export class AnalyticsService {
       return []
     }
 
-    return this.getCachedOrFetch(`tokens-${address}`, async () => {
+    return this.getCachedOrFetch(`tokens-${address}-${this.currentChainId}`, async () => {
       try {
+        const alchemy = this.getAlchemy()
         const balances = await alchemy.core.getTokenBalances(address)
         
         const tokenBalances: TokenBalance[] = []
@@ -152,8 +225,9 @@ export class AnalyticsService {
       return []
     }
 
-    return this.getCachedOrFetch(`nfts-${address}`, async () => {
+    return this.getCachedOrFetch(`nfts-${address}-${this.currentChainId}`, async () => {
       try {
+        const alchemy = this.getAlchemy()
         const nfts = await alchemy.nft.getNftsForOwner(address, {
           contractAddresses: [],
           omitMetadata: false,
@@ -192,10 +266,19 @@ export class AnalyticsService {
 
   // Get transaction history
   async getTransactions(address: string, limit: number = 50): Promise<Transaction[]> {
-    return this.getCachedOrFetch(`transactions-${address}`, async () => {
+    return this.getCachedOrFetch(`transactions-${address}-${this.currentChainId}`, async () => {
       try {
+        const rpcConfig = getRPCConfig(this.currentChainId)
+        if (!rpcConfig) {
+          throw new Error(`Unsupported chain: ${this.currentChainId}`)
+        }
+
+        // Get explorer API URL based on chain
+        const explorerApiUrl = this.getExplorerApiUrl(this.currentChainId)
+        const apiKey = this.getExplorerApiKey(this.currentChainId)
+        
         const response = await axios.get(
-          `https://api.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&page=1&offset=${limit}&sort=desc&apikey=${process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY || 'demo'}`
+          `${explorerApiUrl}?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&page=1&offset=${limit}&sort=desc&apikey=${apiKey}`
         )
         
         if (response.data.status !== '1') {
@@ -300,6 +383,85 @@ export class AnalyticsService {
   private formatTokenBalance(balance: string, decimals: number): string {
     const balanceNum = parseInt(balance, 16)
     return (balanceNum / Math.pow(10, decimals)).toFixed(6)
+  }
+
+  // Get explorer API URL for specific chain
+  private getExplorerApiUrl(chainId: number): string {
+    switch (chainId) {
+      case 1: // Ethereum Mainnet
+        return 'https://api.etherscan.io/api'
+      case 11155111: // Ethereum Sepolia
+        return 'https://api-sepolia.etherscan.io/api'
+      case 137: // Polygon Mainnet
+        return 'https://api.polygonscan.com/api'
+      case 80001: // Polygon Mumbai
+        return 'https://api-testnet.polygonscan.com/api'
+      case 42161: // Arbitrum Mainnet
+        return 'https://api.arbiscan.io/api'
+      case 421614: // Arbitrum Sepolia
+        return 'https://api-sepolia.arbiscan.io/api'
+      case 10: // Optimism Mainnet
+        return 'https://api-optimistic.etherscan.io/api'
+      case 11155420: // Optimism Sepolia
+        return 'https://api-sepolia-optimistic.etherscan.io/api'
+      case 8453: // Base Mainnet
+        return 'https://api.basescan.org/api'
+      case 84532: // Base Sepolia
+        return 'https://api-sepolia.basescan.org/api'
+      case 56: // BSC Mainnet
+        return 'https://api.bscscan.com/api'
+      case 97: // BSC Testnet
+        return 'https://api-testnet.bscscan.com/api'
+      case 43114: // Avalanche Mainnet
+        return 'https://api.snowtrace.io/api'
+      case 43113: // Avalanche Fuji
+        return 'https://api.testnet.snowtrace.io/api'
+      case 250: // Fantom Mainnet
+        return 'https://api.ftmscan.com/api'
+      case 4002: // Fantom Testnet
+        return 'https://api.testnet.ftmscan.com/api'
+      case 30: // Rootstock Mainnet
+        return 'https://api.rsk.co/api'
+      case 31: // Rootstock Testnet
+        return 'https://api.testnet.rsk.co/api'
+      default:
+        return 'https://api.etherscan.io/api' // Default to Ethereum
+    }
+  }
+
+  // Get explorer API key for specific chain
+  private getExplorerApiKey(chainId: number): string {
+    switch (chainId) {
+      case 1: // Ethereum Mainnet
+      case 11155111: // Ethereum Sepolia
+        return process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY || 'demo'
+      case 137: // Polygon Mainnet
+      case 80001: // Polygon Mumbai
+        return process.env.NEXT_PUBLIC_POLYGONSCAN_API_KEY || 'demo'
+      case 42161: // Arbitrum Mainnet
+      case 421614: // Arbitrum Sepolia
+        return process.env.NEXT_PUBLIC_ARBISCAN_API_KEY || 'demo'
+      case 10: // Optimism Mainnet
+      case 11155420: // Optimism Sepolia
+        return process.env.NEXT_PUBLIC_OPTIMISTIC_ETHERSCAN_API_KEY || 'demo'
+      case 8453: // Base Mainnet
+      case 84532: // Base Sepolia
+        return process.env.NEXT_PUBLIC_BASESCAN_API_KEY || 'demo'
+      case 56: // BSC Mainnet
+      case 97: // BSC Testnet
+        return process.env.NEXT_PUBLIC_BSCSCAN_API_KEY || 'demo'
+      case 43114: // Avalanche Mainnet
+      case 43113: // Avalanche Fuji
+        return process.env.NEXT_PUBLIC_SNOWTRACE_API_KEY || 'demo'
+      case 250: // Fantom Mainnet
+      case 4002: // Fantom Testnet
+        return process.env.NEXT_PUBLIC_FTMSCAN_API_KEY || 'demo'
+      case 30: // Rootstock Mainnet
+      case 31: // Rootstock Testnet
+        return process.env.NEXT_PUBLIC_ROOTSTOCKSCAN_API_KEY || 'demo'
+      default:
+        return process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY || 'demo'
+    }
   }
 
   private async getTokenPrice(contractAddress: string, symbol: string): Promise<number | undefined> {
