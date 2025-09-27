@@ -3,21 +3,15 @@ import cors from 'cors'
 import helmet from 'helmet'
 import morgan from 'morgan'
 import dotenv from 'dotenv'
-import { PrismaClient } from '@prisma/client'
 
 // Import routes
-import paymentRoutes from './routes/payments'
-import identityRoutes from './routes/identity'
-import agentRoutes from './routes/agents'
 import analyticsRoutes from './routes/analytics'
-import brewitRoutes from './routes/brewit'
 
 // Load environment variables
 dotenv.config()
 
 const app = express()
-const prisma = new PrismaClient()
-const PORT = process.env.PORT || 8000
+const PORT = process.env.PORT || 3001
 
 // Middleware
 app.use(helmet())
@@ -35,11 +29,7 @@ app.get('/health', (req, res) => {
 })
 
 // Routes
-app.use('/api/payments', paymentRoutes)
-app.use('/api/identity', identityRoutes)
-app.use('/api/agents', agentRoutes)
 app.use('/api/analytics', analyticsRoutes)
-app.use('/api/brewit', brewitRoutes)
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -56,15 +46,13 @@ app.use('*', (req, res) => {
 })
 
 // Graceful shutdown
-process.on('SIGINT', async () => {
+process.on('SIGINT', () => {
   console.log('Shutting down gracefully...')
-  await prisma.$disconnect()
   process.exit(0)
 })
 
-process.on('SIGTERM', async () => {
+process.on('SIGTERM', () => {
   console.log('Shutting down gracefully...')
-  await prisma.$disconnect()
   process.exit(0)
 })
 

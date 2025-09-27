@@ -1,131 +1,124 @@
 'use client'
 
-import { Sidebar } from '@/components/sidebar'
-import { WalletConnect } from '@/components/wallet-connect'
 import { OverviewCards } from '@/components/dashboard/overview-cards'
 import { RecentTransactions } from '@/components/dashboard/recent-transactions'
 import { AgentStatus } from '@/components/dashboard/agent-status'
+import { WalletConnect } from '@/components/wallet-connect'
 import { 
-  Zap, 
-  Shield, 
-  Bot, 
   TrendingUp, 
-  Activity,
-  ArrowRight,
-  Star,
-  Wallet,
-  Settings
+  Activity, 
+  Bot, 
+  ArrowUpRight,
+  Zap,
+  Shield,
+  Clock
 } from 'lucide-react'
 
 export default function Dashboard() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900">
-      <Sidebar />
-      
-      {/* Main content */}
-      <div className="lg:pl-64">
-        {/* Header */}
-        <header className="glass-dark border-b border-gray-700/50 px-6 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
-                  <Zap className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-3xl font-bold text-white">DeFi Dashboard</h1>
-                  <p className="text-gray-300">Advanced automation platform powered by Brewit.money</p>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="hidden sm:flex items-center gap-2 bg-green-500/10 border border-green-500/20 rounded-full px-3 py-1">
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                <span className="text-green-400 text-sm font-medium">All Systems Online</span>
-              </div>
-              <WalletConnect />
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+      {/* Header */}
+      <header className="bg-gray-900/50 backdrop-blur-sm border-b border-gray-700/50">
+        <div className="flex h-16 items-center justify-between px-6">
+          <div className="flex items-center gap-4">
+            <h1 className="text-2xl font-bold text-white">Dashboard</h1>
+            <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/20 border border-green-500/30">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+              <span className="text-sm text-green-400 font-medium">Live</span>
             </div>
           </div>
-        </header>
+          <WalletConnect />
+        </div>
+      </header>
 
-        {/* Main content area */}
-        <main className="p-6">
-          <div className="space-y-8">
-            {/* Features Showcase */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <div className="glass-dark rounded-xl p-6 hover-lift glow">
-                <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center mb-4">
-                  <Zap className="h-6 w-6 text-blue-400" />
+      <div className="flex">
+        {/* Main Content */}
+        <main className="flex-1 p-6 space-y-8">
+          {/* Welcome Section */}
+          <div className="bg-gradient-to-r from-kadena-500/10 to-purple-500/10 rounded-2xl p-8 border border-kadena-500/20">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-3xl font-bold text-white mb-2">
+                  Welcome to AI DeFi
+                </h2>
+                <p className="text-gray-300 text-lg mb-4">
+                  Your intelligent DeFi platform powered by Kadena Chainweb EVM
+                </p>
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-2">
+                    <Shield className="h-5 w-5 text-kadena-400" />
+                    <span className="text-sm text-gray-300">Secure Delegated Accounts</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Bot className="h-5 w-5 text-purple-400" />
+                    <span className="text-sm text-gray-300">AI-Powered Trading</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Zap className="h-5 w-5 text-yellow-400" />
+                    <span className="text-sm text-gray-300">Lightning Fast</span>
+                  </div>
                 </div>
-                <h3 className="text-lg font-semibold text-white mb-2">Smart Wallets</h3>
-                <p className="text-gray-400 text-sm">Delegated accounts with automated trading</p>
               </div>
-              
-              <div className="glass-dark rounded-xl p-6 hover-lift glow-purple">
-                <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center mb-4">
-                  <Bot className="h-6 w-6 text-purple-400" />
+              <div className="hidden md:block">
+                <div className="w-32 h-32 bg-gradient-to-r from-kadena-500/20 to-purple-500/20 rounded-full flex items-center justify-center">
+                  <Zap className="h-16 w-16 text-kadena-400" />
                 </div>
-                <h3 className="text-lg font-semibold text-white mb-2">AI Agents</h3>
-                <p className="text-gray-400 text-sm">Intelligent automation for trading</p>
-              </div>
-              
-              <div className="glass-dark rounded-xl p-6 hover-lift">
-                <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center mb-4">
-                  <Shield className="h-6 w-6 text-green-400" />
-                </div>
-                <h3 className="text-lg font-semibold text-white mb-2">Secure</h3>
-                <p className="text-gray-400 text-sm">Built-in identity verification</p>
-              </div>
-              
-              <div className="glass-dark rounded-xl p-6 hover-lift">
-                <div className="w-12 h-12 bg-orange-500/20 rounded-lg flex items-center justify-center mb-4">
-                  <TrendingUp className="h-6 w-6 text-orange-400" />
-                </div>
-                <h3 className="text-lg font-semibold text-white mb-2">Multi-Chain</h3>
-                <p className="text-gray-400 text-sm">Polygon & Kadena support</p>
               </div>
             </div>
+          </div>
 
-            {/* Overview Cards */}
-            <OverviewCards />
+          {/* Overview Cards */}
+          <OverviewCards />
 
-            {/* Dashboard Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Main Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Recent Transactions */}
+            <div className="lg:col-span-2">
               <RecentTransactions />
+            </div>
+
+            {/* AI Agents */}
+            <div className="lg:col-span-1">
               <AgentStatus />
             </div>
+          </div>
 
-            {/* Quick Actions */}
-            <div className="glass-dark rounded-xl p-8">
-              <div className="flex items-center gap-3 mb-6">
-                <Activity className="h-6 w-6 text-blue-400" />
-                <h2 className="text-2xl font-semibold text-white">Quick Actions</h2>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <button className="group p-6 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/30 rounded-xl hover:from-cyan-500/20 hover:to-blue-500/20 transition-all duration-300 hover-lift">
-                  <div className="flex items-center gap-3 mb-3">
-                    <Wallet className="h-5 w-5 text-cyan-400" />
-                    <div className="text-white font-semibold">Send Payment</div>
-                  </div>
-                  <div className="text-sm text-gray-400 group-hover:text-gray-300">Send tokens via x402 protocol</div>
-                </button>
-                
-                <button className="group p-6 bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/30 rounded-xl hover:from-purple-500/20 hover:to-pink-500/20 transition-all duration-300 hover-lift">
-                  <div className="flex items-center gap-3 mb-3">
-                    <Shield className="h-5 w-5 text-purple-400" />
-                    <div className="text-white font-semibold">Verify Identity</div>
-                  </div>
-                  <div className="text-sm text-gray-400 group-hover:text-gray-300">Brewit.money verification</div>
-                </button>
-                
-                <button className="group p-6 bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/30 rounded-xl hover:from-green-500/20 hover:to-emerald-500/20 transition-all duration-300 hover-lift">
-                  <div className="flex items-center gap-3 mb-3">
-                    <Bot className="h-5 w-5 text-green-400" />
-                    <div className="text-white font-semibold">Agent Chat</div>
-                  </div>
-                  <div className="text-sm text-gray-400 group-hover:text-gray-300">Talk to your AI agents</div>
-                </button>
-              </div>
+          {/* Quick Actions */}
+          <div className="bg-gradient-to-r from-gray-800/50 to-gray-700/50 rounded-2xl p-6 border border-gray-600/30">
+            <h3 className="text-xl font-semibold text-white mb-4">Quick Actions</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <button className="group flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-kadena-500/20 to-kadena-600/20 hover:from-kadena-500/30 hover:to-kadena-600/30 border border-kadena-500/30 hover:border-kadena-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-kadena-500/10">
+                <div className="p-2 rounded-lg bg-kadena-500/20">
+                  <Bot className="h-5 w-5 text-kadena-400" />
+                </div>
+                <div className="text-left">
+                  <div className="font-medium text-white">Create AI Agent</div>
+                  <div className="text-sm text-gray-400">Deploy new trading bot</div>
+                </div>
+                <ArrowUpRight className="h-4 w-4 text-kadena-400 ml-auto group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+              </button>
+
+              <button className="group flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-purple-500/20 to-purple-600/20 hover:from-purple-500/30 hover:to-purple-600/30 border border-purple-500/30 hover:border-purple-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10">
+                <div className="p-2 rounded-lg bg-purple-500/20">
+                  <Activity className="h-5 w-5 text-purple-400" />
+                </div>
+                <div className="text-left">
+                  <div className="font-medium text-white">View Analytics</div>
+                  <div className="text-sm text-gray-400">Performance insights</div>
+                </div>
+                <ArrowUpRight className="h-4 w-4 text-purple-400 ml-auto group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+              </button>
+
+              <button className="group flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-green-500/20 to-green-600/20 hover:from-green-500/30 hover:to-green-600/30 border border-green-500/30 hover:border-green-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/10">
+                <div className="p-2 rounded-lg bg-green-500/20">
+                  <TrendingUp className="h-5 w-5 text-green-400" />
+                </div>
+                <div className="text-left">
+                  <div className="font-medium text-white">Start Trading</div>
+                  <div className="text-sm text-gray-400">Execute trades now</div>
+                </div>
+                <ArrowUpRight className="h-4 w-4 text-green-400 ml-auto group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+              </button>
             </div>
           </div>
         </main>

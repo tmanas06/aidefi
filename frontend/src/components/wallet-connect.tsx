@@ -1,7 +1,7 @@
 'use client'
 
 import { ConnectButton } from '@rainbow-me/rainbowkit'
-import { Button } from '@/components/ui/button'
+import { Wallet, ChevronDown } from 'lucide-react'
 
 export function WalletConnect() {
   return (
@@ -37,64 +37,66 @@ export function WalletConnect() {
             {(() => {
               if (!connected) {
                 return (
-                  <Button 
-                    onClick={openConnectModal} 
-                    className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold rounded-lg transition-all duration-200 hover-lift glow"
+                  <button
+                    onClick={openConnectModal}
+                    type="button"
+                    className="group relative inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-kadena-500 to-kadena-600 hover:from-kadena-600 hover:to-kadena-700 text-white font-semibold rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-kadena-500/25 hover:-translate-y-0.5"
                   >
-                    Connect Wallet
-                  </Button>
+                    <Wallet className="h-5 w-5" />
+                    <span>Connect Wallet</span>
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-kadena-400 to-kadena-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
+                  </button>
                 )
               }
 
               if (chain.unsupported) {
                 return (
-                  <Button 
-                    onClick={openChainModal} 
-                    className="px-6 py-3 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-semibold rounded-lg transition-all duration-200 hover-lift"
+                  <button
+                    onClick={openChainModal}
+                    type="button"
+                    className="group relative inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-red-500/25 hover:-translate-y-0.5"
                   >
-                    Wrong Network
-                  </Button>
+                    <Wallet className="h-5 w-5" />
+                    <span>Wrong Network</span>
+                    <ChevronDown className="h-4 w-4" />
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-red-400 to-red-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
+                  </button>
                 )
               }
 
               return (
-                <div className="flex items-center space-x-3">
-                  <Button
+                <div className="flex items-center gap-3">
+                  <button
                     onClick={openChainModal}
-                    className="flex items-center space-x-2 px-4 py-2 bg-gray-800/50 border border-gray-600 text-white hover:bg-gray-700/50 rounded-lg transition-all duration-200"
+                    type="button"
+                    className="group relative inline-flex items-center gap-2 px-4 py-2 bg-gray-800/50 hover:bg-gray-700/50 text-white font-medium rounded-lg transition-all duration-300 hover:shadow-lg"
                   >
-                    {chain.hasIcon && (
-                      <div
-                        style={{
-                          background: chain.iconBackground,
-                          width: 16,
-                          height: 16,
-                          borderRadius: 999,
-                          overflow: 'hidden',
-                          marginRight: 6,
-                        }}
-                      >
-                        {chain.iconUrl && (
-                          <img
-                            alt={chain.name ?? 'Chain icon'}
-                            src={chain.iconUrl}
-                            style={{ width: 16, height: 16 }}
-                          />
-                        )}
-                      </div>
-                    )}
-                    <span className="font-medium">{chain.name}</span>
-                  </Button>
+                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                    <span className="text-sm">{chain.name}</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </button>
 
-                  <Button 
-                    onClick={openAccountModal} 
-                    className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-semibold rounded-lg transition-all duration-200 hover-lift"
+                  <button
+                    onClick={openAccountModal}
+                    type="button"
+                    className="group relative inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-kadena-500 to-kadena-600 hover:from-kadena-600 hover:to-kadena-700 text-white font-semibold rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-kadena-500/25 hover:-translate-y-0.5"
                   >
-                    {account.displayName}
-                    {account.displayBalance
-                      ? ` (${account.displayBalance})`
-                      : ''}
-                  </Button>
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                        <Wallet className="h-4 w-4" />
+                      </div>
+                      <div className="text-left">
+                        <div className="text-sm font-medium">
+                          {account.displayName}
+                        </div>
+                        <div className="text-xs opacity-80">
+                          {account.displayBalance ? ` ${account.displayBalance}` : ''}
+                        </div>
+                      </div>
+                    </div>
+                    <ChevronDown className="h-4 w-4" />
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-kadena-400 to-kadena-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
+                  </button>
                 </div>
               )
             })()}

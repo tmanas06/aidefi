@@ -1,7 +1,7 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "Backend server for EthGlobal dApp",
+  "description": "Backend server for AI DeFi Kadena dApp",
   "main": "dist/index.js",
   "scripts": {
     "dev": "nodemon src/index.ts",
@@ -13,25 +13,26 @@
     "prisma:seed": "ts-node prisma/seed.ts"
   },
   "keywords": [
-    "polygon",
-    "x402",
-    "asi",
-    "self-protocol"
+    "kadena",
+    "chainweb",
+    "defi",
+    "ai",
+    "delegated-accounts"
   ],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@google/generative-ai": "^0.24.1",
     "@prisma/client": "^5.22.0",
     "axios": "^1.7.9",
-    "brewit": "^0.1.10",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "helmet": "^8.0.0",
     "morgan": "^1.10.0",
     "prisma": "^5.22.0",
-    "viem": "^2.37.8"
+    "viem": "^2.37.8",
+    "hardhat": "^2.22.0",
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

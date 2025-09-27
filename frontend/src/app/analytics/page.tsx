@@ -1,255 +1,244 @@
 'use client'
 
-import { Sidebar } from '@/components/sidebar'
-import { WalletConnect } from '@/components/wallet-connect'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts'
-import { TrendingUp, TrendingDown, DollarSign, Activity, Bot, Shield } from 'lucide-react'
+import { WalletConnect } from '@/components/wallet-connect'
+import { 
+  TrendingUp, 
+  TrendingDown,
+  Activity, 
+  DollarSign,
+  Bot,
+  BarChart3,
+  PieChart,
+  LineChart
+} from 'lucide-react'
 
-const transactionData = [
-  { day: 'Mon', volume: 1200, count: 5 },
-  { day: 'Tue', volume: 1900, count: 8 },
-  { day: 'Wed', volume: 3000, count: 12 },
-  { day: 'Thu', volume: 2800, count: 10 },
-  { day: 'Fri', volume: 1890, count: 7 },
-  { day: 'Sat', volume: 2390, count: 9 },
-  { day: 'Sun', volume: 3490, count: 14 },
+const performanceData = [
+  { time: '00:00', value: 85 },
+  { time: '04:00', value: 87 },
+  { time: '08:00', value: 92 },
+  { time: '12:00', value: 89 },
+  { time: '16:00', value: 94 },
+  { time: '20:00', value: 96 },
+  { time: '24:00', value: 94 }
 ]
 
-const agentData = [
-  { name: 'Wallet Agent', interactions: 45, success: 42 },
-  { name: 'Payment Agent', interactions: 32, success: 30 },
-  { name: 'Identity Agent', interactions: 18, success: 16 },
+const tradingPairs = [
+  { pair: 'KDA/TEST', volume: '$2,847,392', change: '+12.5%', trend: 'up' },
+  { pair: 'KDA/USDC', volume: '$1,520,847', change: '+8.2%', trend: 'up' },
+  { pair: 'TEST/USDC', volume: '$847,293', change: '-2.1%', trend: 'down' },
+  { pair: 'KDA/ETH', volume: '$392,847', change: '+15.3%', trend: 'up' }
 ]
 
-const pieData = [
-  { name: 'Completed', value: 88, color: '#10b981' },
-  { name: 'Pending', value: 8, color: '#f59e0b' },
-  { name: 'Failed', value: 4, color: '#ef4444' },
+const agentPerformance = [
+  { name: 'AI-Bot-01', trades: 47, profit: '$2,847', success: 94.2 },
+  { name: 'AI-Bot-02', trades: 23, profit: '$1,520', success: 87.5 },
+  { name: 'AI-Bot-03', trades: 31, profit: '$2,280', success: 91.8 }
 ]
 
 export default function AnalyticsPage() {
   return (
-    <div className="min-h-screen bg-gray-950">
-      <Sidebar />
-      
-      <div className="lg:pl-64">
-        <header className="bg-gray-900/50 border-b border-gray-800 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-white">Analytics</h1>
-              <p className="text-gray-400">Comprehensive insights into your DeFi activity</p>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+      {/* Header */}
+      <header className="bg-gray-900/50 backdrop-blur-sm border-b border-gray-700/50">
+        <div className="flex h-16 items-center justify-between px-6">
+          <div className="flex items-center gap-4">
+            <h1 className="text-2xl font-bold text-white">Analytics</h1>
+            <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/20 border border-green-500/30">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+              <span className="text-sm text-green-400 font-medium">Live Data</span>
             </div>
-            <WalletConnect />
           </div>
-        </header>
+          <WalletConnect />
+        </div>
+      </header>
 
-        <main className="p-6">
-          <div className="space-y-8">
-            {/* Overview Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <Card className="bg-gray-900/50 border-gray-800">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-400">Total Volume</p>
-                      <p className="text-2xl font-bold text-white">$12,345</p>
-                      <p className="text-xs text-green-400 flex items-center mt-1">
-                        <TrendingUp className="h-3 w-3 mr-1" />
-                        +12.5%
-                      </p>
-                    </div>
-                    <DollarSign className="h-8 w-8 text-cyan-400" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gray-900/50 border-gray-800">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-400">Transactions</p>
-                      <p className="text-2xl font-bold text-white">156</p>
-                      <p className="text-xs text-green-400 flex items-center mt-1">
-                        <TrendingUp className="h-3 w-3 mr-1" />
-                        +8.2%
-                      </p>
-                    </div>
-                    <Activity className="h-8 w-8 text-blue-400" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gray-900/50 border-gray-800">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-400">Agent Interactions</p>
-                      <p className="text-2xl font-bold text-white">95</p>
-                      <p className="text-xs text-green-400 flex items-center mt-1">
-                        <TrendingUp className="h-3 w-3 mr-1" />
-                        +15.3%
-                      </p>
-                    </div>
-                    <Bot className="h-8 w-8 text-purple-400" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gray-900/50 border-gray-800">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-400">Verification Level</p>
-                      <p className="text-2xl font-bold text-white">Enhanced</p>
-                      <p className="text-xs text-blue-400 flex items-center mt-1">
-                        <Shield className="h-3 w-3 mr-1" />
-                        3/4 Complete
-                      </p>
-                    </div>
-                    <Shield className="h-8 w-8 text-green-400" />
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Charts */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Transaction Volume Chart */}
-              <Card className="bg-gray-900/50 border-gray-800">
-                <CardHeader>
-                  <CardTitle className="text-white">Transaction Volume (7 Days)</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={transactionData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                      <XAxis dataKey="day" stroke="#9ca3af" />
-                      <YAxis stroke="#9ca3af" />
-                      <Tooltip 
-                        contentStyle={{ 
-                          backgroundColor: '#1f2937', 
-                          border: '1px solid #374151',
-                          borderRadius: '8px'
-                        }}
-                      />
-                      <Bar dataKey="volume" fill="#06b6d4" radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-
-              {/* Transaction Status Pie Chart */}
-              <Card className="bg-gray-900/50 border-gray-800">
-                <CardHeader>
-                  <CardTitle className="text-white">Transaction Status</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <PieChart>
-                      <Pie
-                        data={pieData}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={60}
-                        outerRadius={100}
-                        paddingAngle={5}
-                        dataKey="value"
-                      >
-                        {pieData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip 
-                        contentStyle={{ 
-                          backgroundColor: '#1f2937', 
-                          border: '1px solid #374151',
-                          borderRadius: '8px'
-                        }}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <div className="flex justify-center space-x-6 mt-4">
-                    {pieData.map((item) => (
-                      <div key={item.name} className="flex items-center space-x-2">
-                        <div 
-                          className="w-3 h-3 rounded-full" 
-                          style={{ backgroundColor: item.color }}
-                        />
-                        <span className="text-sm text-gray-400">{item.name}</span>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Agent Performance */}
-            <Card className="bg-gray-900/50 border-gray-800">
-              <CardHeader>
-                <CardTitle className="text-white">Agent Performance</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {agentData.map((agent) => (
-                    <div key={agent.name} className="flex items-center justify-between p-4 bg-gray-800/50 rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <Bot className="h-5 w-5 text-cyan-400" />
-                        <div>
-                          <p className="text-white font-medium">{agent.name}</p>
-                          <p className="text-gray-400 text-sm">{agent.interactions} total interactions</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-white font-medium">{agent.success}/{agent.interactions}</p>
-                        <p className="text-gray-400 text-sm">
-                          {Math.round((agent.success / agent.interactions) * 100)}% success rate
-                        </p>
-                      </div>
-                    </div>
-                  ))}
+      <div className="p-6 space-y-8">
+        {/* Key Metrics */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card className="bg-gradient-to-br from-gray-900/50 to-gray-800/50 backdrop-blur-sm border-0">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-kadena-500/20">
+                  <DollarSign className="h-5 w-5 text-kadena-400" />
                 </div>
-              </CardContent>
-            </Card>
+                <div>
+                  <p className="text-sm text-gray-400">Total Volume</p>
+                  <p className="text-2xl font-bold text-white">$5.6M</p>
+                  <p className="text-xs text-green-400 flex items-center gap-1">
+                    <TrendingUp className="h-3 w-3" />
+                    +12.5%
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-            {/* Weekly Trends */}
-            <Card className="bg-gray-900/50 border-gray-800">
-              <CardHeader>
-                <CardTitle className="text-white">Weekly Trends</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={transactionData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                    <XAxis dataKey="day" stroke="#9ca3af" />
-                    <YAxis stroke="#9ca3af" />
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: '#1f2937', 
-                        border: '1px solid #374151',
-                        borderRadius: '8px'
-                      }}
+          <Card className="bg-gradient-to-br from-gray-900/50 to-gray-800/50 backdrop-blur-sm border-0">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-green-500/20">
+                  <Activity className="h-5 w-5 text-green-400" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-400">Total Trades</p>
+                  <p className="text-2xl font-bold text-white">1,847</p>
+                  <p className="text-xs text-green-400 flex items-center gap-1">
+                    <TrendingUp className="h-3 w-3" />
+                    +8.2%
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-gray-900/50 to-gray-800/50 backdrop-blur-sm border-0">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-purple-500/20">
+                  <Bot className="h-5 w-5 text-purple-400" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-400">Active Agents</p>
+                  <p className="text-2xl font-bold text-white">24</p>
+                  <p className="text-xs text-green-400 flex items-center gap-1">
+                    <TrendingUp className="h-3 w-3" />
+                    +3
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-gray-900/50 to-gray-800/50 backdrop-blur-sm border-0">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-blue-500/20">
+                  <BarChart3 className="h-5 w-5 text-blue-400" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-400">Success Rate</p>
+                  <p className="text-2xl font-bold text-white">94.2%</p>
+                  <p className="text-xs text-red-400 flex items-center gap-1">
+                    <TrendingDown className="h-3 w-3" />
+                    -2.1%
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Charts Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Performance Chart */}
+          <Card className="bg-gradient-to-br from-gray-900/50 to-gray-800/50 backdrop-blur-sm border-0">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center gap-2">
+                <LineChart className="h-5 w-5 text-kadena-400" />
+                Performance Over Time
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-64 flex items-end justify-between gap-2">
+                {performanceData.map((data, index) => (
+                  <div key={index} className="flex flex-col items-center gap-2">
+                    <div 
+                      className="w-8 bg-gradient-to-t from-kadena-500 to-kadena-400 rounded-t"
+                      style={{ height: `${data.value}%` }}
                     />
-                    <Line 
-                      type="monotone" 
-                      dataKey="volume" 
-                      stroke="#06b6d4" 
-                      strokeWidth={2}
-                      dot={{ fill: '#06b6d4', strokeWidth: 2, r: 4 }}
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="count" 
-                      stroke="#8b5cf6" 
-                      strokeWidth={2}
-                      dot={{ fill: '#8b5cf6', strokeWidth: 2, r: 4 }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </div>
-        </main>
+                    <span className="text-xs text-gray-400">{data.time}</span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Trading Pairs */}
+          <Card className="bg-gradient-to-br from-gray-900/50 to-gray-800/50 backdrop-blur-sm border-0">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center gap-2">
+                <PieChart className="h-5 w-5 text-purple-400" />
+                Top Trading Pairs
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {tradingPairs.map((pair, index) => (
+                <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-gray-800/30">
+                  <div>
+                    <p className="font-medium text-white">{pair.pair}</p>
+                    <p className="text-sm text-gray-400">{pair.volume}</p>
+                  </div>
+                  <div className={`flex items-center gap-1 text-sm font-medium ${
+                    pair.trend === 'up' ? 'text-green-400' : 'text-red-400'
+                  }`}>
+                    {pair.trend === 'up' ? (
+                      <TrendingUp className="h-4 w-4" />
+                    ) : (
+                      <TrendingDown className="h-4 w-4" />
+                    )}
+                    {pair.change}
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Agent Performance Table */}
+        <Card className="bg-gradient-to-br from-gray-900/50 to-gray-800/50 backdrop-blur-sm border-0">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <Bot className="h-5 w-5 text-kadena-400" />
+              Agent Performance
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-700/50">
+                    <th className="text-left py-3 px-4 text-gray-400 font-medium">Agent</th>
+                    <th className="text-left py-3 px-4 text-gray-400 font-medium">Trades</th>
+                    <th className="text-left py-3 px-4 text-gray-400 font-medium">Profit</th>
+                    <th className="text-left py-3 px-4 text-gray-400 font-medium">Success Rate</th>
+                    <th className="text-left py-3 px-4 text-gray-400 font-medium">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {agentPerformance.map((agent, index) => (
+                    <tr key={index} className="border-b border-gray-800/50 hover:bg-gray-800/30 transition-colors">
+                      <td className="py-3 px-4">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                          <span className="text-white font-medium">{agent.name}</span>
+                        </div>
+                      </td>
+                      <td className="py-3 px-4 text-white">{agent.trades}</td>
+                      <td className="py-3 px-4 text-green-400 font-medium">{agent.profit}</td>
+                      <td className="py-3 px-4">
+                        <div className="flex items-center gap-2">
+                          <div className="w-16 h-2 bg-gray-700 rounded-full">
+                            <div 
+                              className="h-2 bg-gradient-to-r from-kadena-500 to-kadena-400 rounded-full"
+                              style={{ width: `${agent.success}%` }}
+                            />
+                          </div>
+                          <span className="text-white text-sm">{agent.success}%</span>
+                        </div>
+                      </td>
+                      <td className="py-3 px-4">
+                        <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-500/20 text-green-400 border border-green-500/30">
+                          Active
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )

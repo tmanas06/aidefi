@@ -1,7 +1,7 @@
 {
-  "name": "ethglobal-hackathon-dapp",
+  "name": "aidefi-kadena-dapp",
   "version": "1.0.0",
-  "description": "Hackathon-ready dApp integrating Polygon + x402, ASI, and Self Protocol",
+  "description": "AI-powered DeFi dApp on Kadena with delegated accounts and automated trading",
   "private": true,
   "workspaces": [
     "frontend",
@@ -12,10 +12,20 @@
     "build": "pnpm --filter frontend build && pnpm --filter backend build",
     "install:all": "pnpm install && pnpm --filter frontend install && pnpm --filter backend install",
     "setup": "pnpm install:all && pnpm --filter backend prisma:generate && pnpm --filter backend prisma:migrate",
-    "start": "concurrently \"pnpm --filter frontend start\" \"pnpm --filter backend start\""
+    "start": "concurrently \"pnpm --filter frontend start\" \"pnpm --filter backend start\"",
+    "compile": "npx hardhat compile",
+    "test": "npx hardhat test",
+    "deploy:testnet": "npx hardhat run scripts/deploy.js --network chainwebTestnet",
+    "deploy:mainnet": "npx hardhat run scripts/deploy.js --network chainwebMainnet",
+    "test:system": "npx hardhat run scripts/test-system.js --network localhost",
+    "verify:testnet": "npx hardhat verify --network chainwebTestnet"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "@nomicfoundation/hardhat-toolbox": "^6.1.0",
+    "@kadena/hardhat-chainweb": "^1.5.1",
+    "hardhat": "^2.22.0",
+    "@openzeppelin/contracts": "^4.9.0"
   },
   "engines": {
     "node": ">=18.0.0",
