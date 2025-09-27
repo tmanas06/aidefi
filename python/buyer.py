@@ -46,42 +46,67 @@ ERC20_ABI = [
 
 
 def buy_item(item_id: int):
-    # Step 1: Ask merchant for item
-    resp = requests.post(f"{MERCHANT_URL}/purchase", json={"item_id": item_id})
-    payment_info = resp.json()
-    print("Merchant response:", payment_info)
+    """
+    Simple token transfer from buyer to merchant
+    """
+    try:
+        print(f"🛒 Buying item {item_id}...")
+        print(f"👤 Buyer Address: {buyer_addr}")
+        
+        # Step 1: Get payment details from merchant
+        resp = requests.post(f"{MERCHANT_URL}/purchase", json={"item_id": item_id})
+        payment_info = resp.json()
+        print("📋 Payment Info:", payment_info)
 
-    if payment_info.get("status") != "402 Payment Required":
-        print("❌ No payment required, aborting")
-        return
+        if payment_info.get("status") != "402 Payment Required":
+            print("❌ No payment required, aborting")
+            return {"error": "No payment required"}
 
-    token_addr = payment_info["token_address"]
-    amount = int(payment_info["amount"])
-    recipient = payment_info["recipient_address"]
+        token_addr = payment_info["token_address"]
+        amount = int(payment_info["amount"])
+        recipient = payment_info["recipient_address"]
+        
+        print(f"💰 Amount: {amount}")
+        print(f"🏪 Recipient: {recipient}")
 
-    # Step 2: Build & send tx
-    token = w3.eth.contract(address=token_addr, abi=ERC20_ABI)
-    nonce = w3.eth.get_transaction_count(buyer_addr)
+        # Step 2: Simple token transfer
+        token = w3.eth.contract(address=token_addr, abi=ERC20_ABI)
+        nonce = w3.eth.get_transaction_count(buyer_addr)
 
-    tx = token.functions.transfer(recipient, amount).build_transaction(
-        {
+        # Build transaction
+        tx = token.functions.transfer(recipient, amount).build_transaction({
             "chainId": w3.eth.chain_id,
             "gas": 100000,
             "gasPrice": w3.eth.gas_price,
             "nonce": nonce,
+        })
+
+        # Sign and send transaction
+        signed = w3.eth.account.sign_transaction(tx, PRIVATE_KEY)
+        tx_hash = w3.eth.send_raw_transaction(signed.rawTransaction)
+        tx_hash_hex = w3.to_hex(tx_hash)
+        
+        print(f"✅ Payment sent! Transaction: {tx_hash_hex}")
+        print(f"🔗 Explorer: https://explorer.testnet.rsk.co/tx/{tx_hash_hex}")
+
+        # Step 3: Notify merchant of payment
+        retry = requests.post(
+            f"{MERCHANT_URL}/retry_purchase", 
+            json={"tx_hash": tx_hash_hex, "amount": amount}
+        )
+        verification = retry.json()
+        print("✅ Merchant verification:", verification)
+        
+        return {
+            "success": True,
+            "tx_hash": tx_hash_hex,
+            "amount": amount,
+            "recipient": recipient
         }
-    )
-
-    signed = w3.eth.account.sign_transaction(tx, PRIVATE_KEY)
-    tx_hash = w3.eth.send_raw_transaction(signed.rawTransaction)
-    tx_hash_hex = w3.to_hex(tx_hash)
-    print(f"✅ Payment sent: {tx_hash_hex}")
-
-    # Step 3: Retry purchase
-    retry = requests.post(
-        f"{MERCHANT_URL}/retry_purchase", json={"tx_hash": tx_hash_hex, "amount": amount}
-    )
-    print("Merchant verification:", retry.json())
+        
+    except Exception as e:
+        print(f"❌ Error during purchase: {str(e)}")
+        return {"error": str(e)}
 
 
 def run_buyer_agent():
@@ -94,7 +119,13 @@ if __name__ == "__main__":
     print(f"📍 Agent Name: {buyer_agent.name}")
     print(f"🔗 Agent Address: {buyer_agent.address}")
     print(f"⚡ Agent Port: 8000")
-    print("🛒 Running purchase simulation...")
+    print(f"👤 Buyer Address: {buyer_addr}")
+    print(f"🌐 RPC URL: {RPC_URL}")
+    print("🛒 Ready for simple token transfers!")
+    
+    # Optional: Test purchase of item 1
+    # Uncomment the line below to test a purchase
+    # buy_item(1)
     
     # Start the buyer agent
     run_buyer_agent()
