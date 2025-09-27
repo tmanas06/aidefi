@@ -7,6 +7,8 @@ import { ChatInterface } from '@/components/chat/chat-interface'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, Plus } from 'lucide-react'
 import { useWebSocket } from '@/hooks/useWebSocket'
+import { useAccount } from 'wagmi'
+import { WalletConnect } from '@/components/wallet/wallet-connect'
 
 interface ChatDashboardProps {
   onStartNewChat: () => void
@@ -49,10 +51,11 @@ export function ChatDashboard({ onStartNewChat }: ChatDashboardProps) {
   const [currentSession, setCurrentSession] = useState<ChatSession | null>(null)
   const [selectedAgentId, setSelectedAgentId] = useState<string | undefined>()
   const [showAgentList, setShowAgentList] = useState(true)
+  const { address, isConnected } = useAccount()
 
   // WebSocket integration
   const { connected, joinAgentRoom, leaveAgentRoom, sendMessage: wsSendMessage } = useWebSocket({
-    userId: 'user-123', // In real app, get from auth
+    userId: address || 'anonymous', // Use wallet address as user ID
     onMessageReceived: (message: Message) => {
       setCurrentSession(prev => prev ? {
         ...prev,
@@ -172,6 +175,28 @@ export function ChatDashboard({ onStartNewChat }: ChatDashboardProps) {
     setSelectedAgentId(undefined)
   }
 
+  // Show wallet connection prompt if not connected
+  if (!isConnected) {
+    return (
+      <div className="flex-1 flex items-center justify-center bg-muted/50">
+        <div className="text-center max-w-md mx-auto p-8">
+          <div className="mb-6">
+            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold mb-2">Connect Your Wallet</h3>
+            <p className="text-muted-foreground mb-6">
+              Connect your wallet to start chatting with AI agents and access blockchain features
+            </p>
+          </div>
+          <WalletConnect />
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="flex h-full">
       {showAgentList ? (
@@ -198,11 +223,16 @@ export function ChatDashboard({ onStartNewChat }: ChatDashboardProps) {
         </div>
       ) : (
         <div className="flex-1 flex flex-col">
-          <div className="p-4 border-b bg-background">
+          <div className="p-4 border-b bg-background flex items-center justify-between">
             <Button variant="ghost" onClick={handleBackToAgents}>
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Agents
             </Button>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">
+                Connected as: {address?.slice(0, 6)}...{address?.slice(-4)}
+              </span>
+            </div>
           </div>
           <ChatInterface
             session={currentSession}

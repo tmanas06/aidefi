@@ -4,9 +4,10 @@ import { useState, useRef, useEffect } from 'react'
 import { Message, ChatSession } from '@/types/chat'
 import { MessageBubble } from './message-bubble'
 import { MessageInput } from './message-input'
+import { BlockchainActions } from './blockchain-actions'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { Bot, Phone, Video, MoreVertical, X } from 'lucide-react'
+import { Bot, Phone, Video, MoreVertical, X, Coins } from 'lucide-react'
 
 interface ChatInterfaceProps {
   session: ChatSession | null
@@ -18,6 +19,7 @@ interface ChatInterfaceProps {
 export function ChatInterface({ session, onSendMessage, onEndSession, onTransferAgent }: ChatInterfaceProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [showOptions, setShowOptions] = useState(false)
+  const [showBlockchainActions, setShowBlockchainActions] = useState(false)
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -57,6 +59,14 @@ export function ChatInterface({ session, onSendMessage, onEndSession, onTransfer
         </div>
         
         <div className="flex items-center gap-2">
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={() => setShowBlockchainActions(!showBlockchainActions)}
+            className={showBlockchainActions ? 'bg-primary/10 text-primary' : ''}
+          >
+            <Coins className="h-4 w-4" />
+          </Button>
           <Button variant="ghost" size="icon">
             <Phone className="h-4 w-4" />
           </Button>
@@ -105,6 +115,11 @@ export function ChatInterface({ session, onSendMessage, onEndSession, onTransfer
         ))}
         <div ref={messagesEndRef} />
       </div>
+
+      {/* Blockchain Actions */}
+      {showBlockchainActions && (
+        <BlockchainActions agentAddress="0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b6" />
+      )}
 
       {/* Message Input */}
       <MessageInput 

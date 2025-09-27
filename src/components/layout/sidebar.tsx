@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { MessageCircle, Settings, BarChart3, Users, Bell } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { WalletConnect } from '@/components/wallet/wallet-connect'
+import { WalletStatus } from '@/components/wallet/wallet-status'
 
 interface SidebarProps {
   activeTab: string
@@ -48,16 +50,13 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
         </div>
       </nav>
       
+      {/* Wallet Section */}
       <div className="p-4 border-t">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-            <span className="text-sm font-medium text-primary-foreground">U</span>
-          </div>
-          <div>
-            <p className="text-sm font-medium">User</p>
-            <p className="text-xs text-muted-foreground">Customer</p>
-          </div>
-        </div>
+        <WalletStatus />
+      </div>
+      
+      <div className="p-4 border-t">
+        <WalletConnect />
       </div>
     </div>
   )
