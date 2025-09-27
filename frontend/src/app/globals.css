@@ -71,42 +71,59 @@
 
 @layer components {
   .glass {
-    @apply bg-white/10 backdrop-blur-md border border-white/20;
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
   }
   
   .glass-dark {
-    @apply bg-gray-900/80 backdrop-blur-md border border-gray-700/50;
+    background-color: rgba(17, 24, 39, 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(55, 65, 81, 0.5);
   }
   
   .gradient-primary {
-    @apply bg-gradient-to-r from-kadena-500 to-kadena-700;
+    background: linear-gradient(to right, #3b82f6, #1d4ed8);
   }
   
   .gradient-secondary {
-    @apply bg-gradient-to-r from-purple-500 to-pink-500;
+    background: linear-gradient(to right, #8b5cf6, #ec4899);
   }
   
   .gradient-accent {
-    @apply bg-gradient-to-r from-blue-500 to-cyan-500;
+    background: linear-gradient(to right, #3b82f6, #06b6d4);
   }
   
   .hover-lift {
-    @apply transition-all duration-300 hover:transform hover:-translate-y-1 hover:shadow-lg;
+    transition: all 0.3s ease;
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   }
   
   .glow {
-    @apply shadow-lg shadow-kadena-500/25;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.25);
   }
   
   .glow-purple {
-    @apply shadow-lg shadow-purple-500/25;
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.25);
   }
   
   .text-gradient {
-    @apply bg-gradient-to-r from-kadena-500 to-kadena-700 bg-clip-text text-transparent;
+    background: linear-gradient(to right, #3b82f6, #1d4ed8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
   
   .card-hover {
-    @apply transition-all duration-300 hover:shadow-xl hover:shadow-kadena-500/10 hover:border-kadena-500/50;
+    transition: all 0.3s ease;
+  }
+  
+  .card-hover:hover {
+    box-shadow: 0 20px 40px rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.5);
   }
 }

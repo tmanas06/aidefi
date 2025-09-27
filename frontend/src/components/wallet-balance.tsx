@@ -1,175 +1,128 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { kadenaExplorer } from '@/lib/kadena-explorer'
-import { 
-  Wallet, 
-  RefreshCw, 
-  ExternalLink, 
-  Copy, 
-  CheckCircle,
-  TrendingUp,
-  Activity
-} from 'lucide-react'
+import { transactionService, WalletBalance } from '@/lib/transaction-service'
+import { Wallet, TrendingUp, TrendingDown, RefreshCw } from 'lucide-react'
 
 interface WalletBalanceProps {
   address: string
-  className?: string
 }
 
-export function WalletBalance({ address, className }: WalletBalanceProps) {
-  const [balance, setBalance] = useState<string>('0')
-  const [loading, setLoading] = useState(false)
-  const [copied, setCopied] = useState(false)
+export function WalletBalance({ address }: WalletBalanceProps) {
+  const [balance, setBalance] = useState<WalletBalance | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isRefreshing, setIsRefreshing] = useState(false)
 
-  const fetchBalance = async () => {
-    if (!address) return
-    
-    setLoading(true)
+  const loadBalance = async () => {
     try {
-      const balanceData = await kadenaExplorer.getAccountBalance(address)
-      setBalance(balanceData)
+      const walletBalance = await transactionService.getBalance(address)
+      setBalance(walletBalance)
     } catch (error) {
-      console.error('Error fetching balance:', error)
+      console.error('Failed to load balance:', error)
     } finally {
-      setLoading(false)
+      setIsLoading(false)
     }
+  }
+
+  const refreshBalance = async () => {
+    setIsRefreshing(true)
+    await loadBalance()
+    setIsRefreshing(false)
   }
 
   useEffect(() => {
-    fetchBalance()
+    if (address) {
+      loadBalance()
+    }
   }, [address])
 
-  const copyToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(address)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch (error) {
-      console.error('Failed to copy:', error)
-    }
+  if (isLoading) {
+    return (
+      <div className="bg-gradient-to-br from-kadena-500/20 to-kadena-600/20 border border-kadena-500/30 rounded-xl p-6">
+        <div className="flex items-center justify-center">
+          <div className="flex items-center gap-3">
+            <div className="w-6 h-6 border-2 border-kadena-500 border-t-transparent rounded-full animate-spin" />
+            <span className="text-kadena-300">Loading balance...</span>
+          </div>
+        </div>
+      </div>
+    )
   }
 
-  const formatAddress = (address: string) => {
-    return `${address.slice(0, 6)}...${address.slice(-4)}`
-  }
-
-  const formatBalance = (balance: string) => {
-    const num = parseFloat(balance)
-    if (num === 0) return '0.000000'
-    if (num < 0.000001) return '< 0.000001'
-    return num.toFixed(6)
+  if (!balance) {
+    return (
+      <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50">
+        <div className="text-center">
+          <Wallet className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+          <p className="text-gray-400">No balance data available</p>
+        </div>
+      </div>
+    )
   }
 
   return (
-    <Card className={className}>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-semibold text-white flex items-center gap-2">
+    <div className="space-y-4">
+      {/* Main Balance Card */}
+      <div className="bg-gradient-to-br from-kadena-500/20 to-kadena-600/20 border border-kadena-500/30 rounded-xl p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
             <Wallet className="h-5 w-5 text-kadena-400" />
-            Wallet Balance
-          </CardTitle>
-          <Button
-            onClick={fetchBalance}
-            disabled={loading}
-            size="sm"
-            variant="outline"
-            className="text-white border-gray-600 hover:bg-gray-700"
+            <span className="text-kadena-300 font-medium">Wallet Balance</span>
+          </div>
+          <button
+            onClick={refreshBalance}
+            disabled={isRefreshing}
+            className="p-2 text-kadena-400 hover:text-kadena-300 transition-colors disabled:opacity-50"
           >
-            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-            Refresh
-          </Button>
+            <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+          </button>
         </div>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {/* Balance Display */}
-          <div className="text-center">
-            <div className="text-3xl font-bold text-white mb-2">
-              {formatBalance(balance)} KDA
-            </div>
-            <div className="text-sm text-gray-400">
-              ≈ ${(parseFloat(balance) * 0.1).toFixed(2)} USD
-            </div>
+        
+        <div className="space-y-2">
+          <div className="text-3xl font-bold text-white">
+            {balance.kda} KDA
           </div>
-
-          {/* Address Display */}
-          <div className="bg-gray-800/50 rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-sm text-gray-400 mb-1">Wallet Address</div>
-                <div className="text-white font-mono text-sm">
-                  {formatAddress(address)}
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={copyToClipboard}
-                  className="text-gray-400 hover:text-white border-gray-600"
-                >
-                  {copied ? (
-                    <CheckCircle className="h-4 w-4" />
-                  ) : (
-                    <Copy className="h-4 w-4" />
-                  )}
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => window.open(kadenaExplorer.getAddressUrl(address), '_blank')}
-                  className="text-gray-400 hover:text-white border-gray-600"
-                >
-                  <ExternalLink className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
+          <div className="text-lg text-kadena-300">
+            ≈ ${balance.usd}
           </div>
-
-          {/* Network Info */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-gray-800/30 rounded-lg p-3">
-              <div className="flex items-center gap-2 mb-1">
-                <Activity className="h-4 w-4 text-green-400" />
-                <span className="text-sm text-gray-400">Network</span>
-              </div>
-              <div className="text-white font-medium">Kadena EVM Testnet</div>
-            </div>
-            <div className="bg-gray-800/30 rounded-lg p-3">
-              <div className="flex items-center gap-2 mb-1">
-                <TrendingUp className="h-4 w-4 text-blue-400" />
-                <span className="text-sm text-gray-400">Chain ID</span>
-              </div>
-              <div className="text-white font-medium">5920</div>
-            </div>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="pt-2">
-            <div className="text-sm text-gray-400 mb-2">Quick Actions</div>
-            <div className="flex gap-2">
-              <Button
-                size="sm"
-                className="bg-kadena-500 hover:bg-kadena-600 text-white flex-1"
-                onClick={() => window.open('https://tools.kadena.io/faucet/evm', '_blank')}
-              >
-                Get Test KDA
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                className="text-white border-gray-600 hover:bg-gray-700 flex-1"
-                onClick={() => window.open(kadenaExplorer.getAddressUrl(address), '_blank')}
-              >
-                View on Explorer
-              </Button>
-            </div>
+          <div className="text-sm text-kadena-400">
+            {balance.address.slice(0, 6)}...{balance.address.slice(-4)}
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+
+      {/* Balance Stats */}
+      <div className="grid grid-cols-2 gap-4">
+        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700/50">
+          <div className="flex items-center gap-2 mb-2">
+            <TrendingUp className="h-4 w-4 text-green-400" />
+            <span className="text-sm text-gray-400">24h Change</span>
+          </div>
+          <div className="text-lg font-semibold text-green-400">+2.4%</div>
+          <div className="text-xs text-gray-500">+$568.00</div>
+        </div>
+        
+        <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700/50">
+          <div className="flex items-center gap-2 mb-2">
+            <TrendingDown className="h-4 w-4 text-red-400" />
+            <span className="text-sm text-gray-400">7d Change</span>
+          </div>
+          <div className="text-lg font-semibold text-red-400">-1.2%</div>
+          <div className="text-xs text-gray-500">-$284.00</div>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-2 gap-3">
+        <button className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-kadena-500/20 to-kadena-600/20 hover:from-kadena-500/30 hover:to-kadena-600/30 border border-kadena-500/30 rounded-lg text-kadena-300 hover:text-white transition-all duration-300">
+          <Wallet className="h-4 w-4" />
+          <span className="text-sm font-medium">Send</span>
+        </button>
+        <button className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-green-500/20 to-green-600/20 hover:from-green-500/30 hover:to-green-600/30 border border-green-500/30 rounded-lg text-green-300 hover:text-white transition-all duration-300">
+          <TrendingUp className="h-4 w-4" />
+          <span className="text-sm font-medium">Receive</span>
+        </button>
+      </div>
+    </div>
   )
 }
